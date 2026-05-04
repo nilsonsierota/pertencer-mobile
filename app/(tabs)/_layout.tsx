@@ -3,6 +3,7 @@
 import { Tabs, useRouter } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { View, Text, ActivityIndicator } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 
 export default function TabLayout() {
@@ -38,11 +39,19 @@ export default function TabLayout() {
     >
       <Tabs.Screen
         name="index"
-        options={{ title: "Planos", headerTitle: "Pertencer" }}
+        options={{ 
+          title: "Início",
+          headerTitle: "Pertencer",
+          tabBarIcon: ({ color, size }) => <Ionicons name="list-outline" size={size} color={color} />
+        }}
       />
       <Tabs.Screen
         name="buscar"
-        options={{ title: "Buscar" }}
+        options={{ 
+          title: "Buscar",
+          headerTitle: "Buscar",
+          tabBarIcon: ({ color, size }) => <Ionicons name="search-outline" size={size} color={color} />
+        }}
       />
     </Tabs>
   );
