@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { DevotionalService } from "../../src/services/devotional.service";
 import type { Plan } from "../../src/types";
-import { View, Text, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 
 export default function PlanListPage() {
@@ -26,9 +26,9 @@ export default function PlanListPage() {
 
   if (authLoading || isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-background">
+      <View style={styles.loading}>
         <ActivityIndicator size="large" color="#FFFFFF" />
-        <Text className="text-white mt-2">Carregando planos...</Text>
+        <Text style={styles.loadingText}>Carregando planos...</Text>
       </View>
     );
   }
@@ -36,28 +36,35 @@ export default function PlanListPage() {
   if (!user) return null;
 
   return (
-    <ScrollView className="flex-1 bg-background p-4">
-      <View className="flex flex-col items-center py-4">
+    <ScrollView style={styles.container}>
+      <View style={styles.content}>
         {plans.map((plan) => (
           <Pressable
             key={plan.id}
             onPress={() => router.push(`/${plan.id}?title=${encodeURIComponent(plan.name)}`)}
-            className="w-full p-4 mb-3 rounded-lg bg-secondary border-2 border-primary"
+            style={styles.planButton}
           >
-            <Text className="text-center text-white text-lg font-bold">
-              {plan.name}
-            </Text>
+            <Text style={styles.planText}>{plan.name}</Text>
           </Pressable>
         ))}
         <Pressable
           onPress={() => router.push("/(tabs)/buscar")}
-          className="w-full p-4 mt-2 rounded-lg bg-white border-2 border-primary"
+          style={styles.searchButton}
         >
-          <Text className="text-center text-primary text-lg font-bold">
-            BUSCAR PALAVRA
-          </Text>
+          <Text style={styles.searchText}>BUSCAR PALAVRA</Text>
         </Pressable>
       </View>
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#189E50' },
+  loadingText: { color: '#FFFFFF', marginTop: 8 },
+  container: { flex: 1, backgroundColor: '#189E50', padding: 16 },
+  content: { alignItems: 'center', paddingVertical: 16 },
+  planButton: { width: '100%', padding: 16, marginBottom: 12, borderRadius: 8, backgroundColor: '#189E50', borderWidth: 2, borderColor: '#273107' },
+  planText: { textAlign: 'center', color: '#FFFFFF', fontSize: 18, fontWeight: 'bold' },
+  searchButton: { width: '100%', padding: 16, marginTop: 8, borderRadius: 8, backgroundColor: '#FFFFFF', borderWidth: 2, borderColor: '#273107' },
+  searchText: { textAlign: 'center', color: '#273107', fontSize: 18, fontWeight: 'bold' },
+});

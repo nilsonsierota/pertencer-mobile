@@ -17,9 +17,9 @@ export default function TabLayout() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-background">
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#189E50' }}>
         <ActivityIndicator size="large" color="#189E50" />
-        <Text className="text-gray-500 mt-2">Carregando...</Text>
+        <Text style={{ color: '#6B7280', marginTop: 8 }}>Carregando...</Text>
       </View>
     );
   }

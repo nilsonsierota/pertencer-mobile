@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { useAuth } from "../../src/services/firebase";
-import { DevotionalService } from "../../src/services/devotional.service";
+import { useAuth } from "../../../src/context/AuthContext";
+import { DevotionalService } from "../../../src/services/devotional.service";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Alert } from "react-native";
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Alert, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 
 const questions = [
   "VOCÊ VIU O AGIR DE DEUS NESSE CAPÍTULO?",
@@ -76,37 +76,79 @@ export default function QuestionsPage() {
     } catch (e) { Alert.alert("Erro", "Falha ao gerar PDF"); }
   };
 
-  if (loading) return <View className="flex-1 items-center justify-center bg-background"><ActivityIndicator size="large" color="#FFFFFF" /></View>;
+  if (loading) return <View style={styles.loading}><ActivityIndicator size="large" color="#FFFFFF" /></View>;
 
   return (
-    <View className="flex-1 bg-background">
-      <View className="flex-row items-center px-4 py-2">
-        <Pressable onPress={() => router.back()} className="p-2"><Text className="text-white text-sm">{"< Capitulos"}</Text></Pressable>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={100}>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} style={styles.backButton}><Text style={styles.backText}>{"< Capitulos"}</Text></Pressable>
       </View>
-      <Text className="text-xl font-bold text-white text-center mb-2">{title} {chapter}</Text>
-      <ScrollView className="flex-1 p-4">
+      <Text style={styles.title}>{title} {chapter}</Text>
+      <ScrollView style={styles.content} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContent}>
         {questions.map((q, i) => (
-          <View key={i} className="mb-3">
-            <Text className="text-sm text-white mb-1 uppercase">{q}</Text>
-            <TextInput value={answers[i]} onChangeText={(v) => handleAnswerChange(i, v)} className="w-full p-2 bg-white rounded text-primary" multiline numberOfLines={3} placeholder="Escreva..."
-              editable={!isDone} textAlignVertical="top" />
+          <View key={i} style={styles.question}>
+            <Text style={styles.questionText}>{q}</Text>
+            <TextInput 
+              value={answers[i]} 
+              onChangeText={(v) => handleAnswerChange(i, v)} 
+              style={styles.input} 
+              multiline 
+              numberOfLines={4} 
+              placeholder="Escreva..."
+              placeholderTextColor="#9CA3AF"
+              editable={!isDone} 
+              textAlignVertical="top"
+            />
           </View>
         ))}
-        <View className="flex-row items-center mt-4 mb-4">
-          <Pressable onPress={() => setIsDone(!isDone)} className="flex-row items-center">
-            <View className={`w-6 h-6 rounded border-2 mr-2 items-center justify-center ${isDone ? 'bg-white border-white' : 'border-white'}`}>
-              {isDone && <Text className="text-primary">✓</Text>}
+        <View style={styles.checkContainer}>
+          <Pressable onPress={() => setIsDone(!isDone)} style={styles.checkRow}>
+            <View style={[styles.checkBox, isDone && styles.checkBoxChecked]}>
+              {isDone && <Text style={styles.checkMark}>✓</Text>}
             </View>
-            <Text className="text-white">Terminei de responder</Text>
+            <Text style={styles.checkLabel}>Terminei de responder</Text>
           </Pressable>
         </View>
-        <View className="flex-row justify-center gap-3 mb-8">
-          <Pressable onPress={handleSharePdf} className="px-4 py-2 bg-white rounded"><Text className="text-primary font-bold">Compartilhar</Text></Pressable>
-          <Pressable onPress={handleSave} disabled={saving} className="px-4 py-2 bg-white rounded">
-            {saving ? <ActivityIndicator size="small" color="#189E50" /> : <Text className="text-primary font-bold">Salvar</Text>}
+        <View style={styles.actions}>
+          <Pressable onPress={handleSharePdf} style={styles.actionButton}><Text style={styles.actionText}>Compartilhar</Text></Pressable>
+          <Pressable onPress={handleSave} disabled={saving} style={styles.actionButton}>
+            {saving ? <ActivityIndicator size="small" color="#189E50" /> : <Text style={styles.actionText}>Salvar</Text>}
           </Pressable>
         </View>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#189E50' },
+  container: { flex: 1, backgroundColor: '#189E50' },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8 },
+  backButton: { padding: 8 },
+  backText: { color: '#FFFFFF', fontSize: 14 },
+  title: { fontSize: 20, fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center', marginBottom: 8 },
+  content: { flex: 1 },
+  scrollContent: { padding: 16, paddingBottom: 40 },
+  question: { marginBottom: 16 },
+  questionText: { fontSize: 14, color: '#FFFFFF', marginBottom: 6, textTransform: 'uppercase', fontWeight: '600' },
+  input: { 
+    width: '100%', 
+    padding: 12, 
+    backgroundColor: '#FFFFFF', 
+    borderRadius: 8, 
+    color: '#273107', 
+    minHeight: 100, 
+    textAlignVertical: 'top',
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  checkContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 20, marginBottom: 20 },
+  checkRow: { flexDirection: 'row', alignItems: 'center' },
+  checkBox: { width: 24, height: 24, borderRadius: 4, borderWidth: 2, borderColor: '#FFFFFF', marginRight: 8, alignItems: 'center', justifyContent: 'center' },
+  checkBoxChecked: { backgroundColor: '#FFFFFF' },
+  checkMark: { color: '#273107', fontSize: 16, fontWeight: 'bold' },
+  checkLabel: { color: '#FFFFFF', fontSize: 14 },
+  actions: { flexDirection: 'row', justifyContent: 'center', gap: 16, marginBottom: 40 },
+  actionButton: { paddingHorizontal: 24, paddingVertical: 12, backgroundColor: '#FFFFFF', borderRadius: 8, minWidth: 120, alignItems: 'center' },
+  actionText: { color: '#273107', fontWeight: 'bold', fontSize: 14 },
+});

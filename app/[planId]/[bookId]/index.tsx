@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { useAuth } from "../../src/services/firebase";
-import { DevotionalService } from "../../src/services/devotional.service";
-import type { Chapter } from "../../src/types";
-import { View, Text, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { useAuth } from "../../../src/context/AuthContext";
+import { DevotionalService } from "../../../src/services/devotional.service";
+import type { Chapter } from "../../../src/types";
+import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from "react-native";
 
 export default function ChapterListPage() {
   const router = useRouter();
@@ -25,36 +25,36 @@ export default function ChapterListPage() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-background">
+      <View style={styles.loading}>
         <ActivityIndicator size="large" color="#FFFFFF" />
-        <Text className="text-white mt-2">Carregando capitulos...</Text>
+        <Text style={styles.loadingText}>Carregando capitulos...</Text>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-background">
-      <View className="flex-row items-center px-4 py-2">
-        <Pressable onPress={() => router.back()} className="p-2">
-          <Text className="text-white text-sm">{"< Livros"}</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} style={styles.backButton}>
+          <Text style={styles.backText}>{"< Livros"}</Text>
         </Pressable>
       </View>
-      <Text className="text-2xl font-bold text-white text-center mb-4 uppercase">{title}</Text>
-      <ScrollView className="flex-1 p-4">
-        <View className="flex flex-row flex-wrap justify-center">
+      <Text style={styles.title}>{title?.toUpperCase()}</Text>
+      <ScrollView style={styles.list}>
+        <View style={styles.grid}>
           {chapters.map((chapter) => {
             const isToday = chapter.isToday || false;
             const isDone = chapter.done || false;
-            let bgColor = "bg-chapter";
-            let textColor = "text-white";
-            if (isToday) { bgColor = isDone ? "bg-secondary" : "bg-primary"; }
-            else if (isDone) { bgColor = "bg-white"; textColor = "text-primary"; }
+            let bgColor = styles.chapterDefault;
+            let textColor = styles.textWhite;
+            if (isToday) { bgColor = isDone ? styles.chapterDoneToday : styles.chapterToday; }
+            else if (isDone) { bgColor = styles.chapterDone; textColor = styles.textPrimary; }
 
             return (
               <Pressable key={chapter.id}
                 onPress={() => router.push(`/${planId}/${bookId}/${chapter.id}?title=${encodeURIComponent(title||'')}&chapter=${chapter.number}`)}
-                className={`w-14 h-14 m-1 rounded-lg items-center justify-center border-2 ${bgColor} ${textColor}`}>
-                <Text className={`font-bold ${textColor}`}>{chapter.number}</Text>
+                style={[styles.chapterButton, bgColor, textColor]}>
+                <Text style={[styles.chapterNumber, textColor]}>{chapter.number}</Text>
               </Pressable>
             );
           })}
@@ -63,3 +63,23 @@ export default function ChapterListPage() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#189E50' },
+  loadingText: { color: '#FFFFFF', marginTop: 8 },
+  container: { flex: 1, backgroundColor: '#189E50' },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8 },
+  backButton: { padding: 8 },
+  backText: { color: '#FFFFFF', fontSize: 14 },
+  title: { fontSize: 24, fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center', marginBottom: 16, textTransform: 'uppercase' },
+  list: { flex: 1, padding: 16 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
+  chapterButton: { width: 56, height: 56, margin: 4, borderRadius: 8, alignItems: 'center', justifyContent: 'center', borderWidth: 2 },
+  chapterDefault: { backgroundColor: '#6C7278', borderColor: '#6C7278' },
+  chapterToday: { backgroundColor: '#273107', borderColor: '#273107' },
+  chapterDoneToday: { backgroundColor: '#189E50', borderColor: '#189E50' },
+  chapterDone: { backgroundColor: '#FFFFFF', borderColor: '#FFFFFF' },
+  chapterNumber: { fontWeight: 'bold', fontSize: 18 },
+  textWhite: { color: '#FFFFFF' },
+  textPrimary: { color: '#273107' },
+});

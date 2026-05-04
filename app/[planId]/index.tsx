@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { useAuth } from "../../src/services/firebase";
+import { useAuth } from "../../src/context/AuthContext";
 import { DevotionalService } from "../../src/services/devotional.service";
 import type { Book } from "../../src/types";
-import { View, Text, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 
 export default function BookListPage() {
@@ -28,31 +28,31 @@ export default function BookListPage() {
 
   if (authLoading || isLoading) {
     return (
-      <View className="flex-1 items-center justify-center bg-background">
+      <View style={styles.loading}>
         <ActivityIndicator size="large" color="#FFFFFF" />
-        <Text className="text-white mt-2">Carregando livros...</Text>
+        <Text style={styles.loadingText}>Carregando livros...</Text>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-background">
-      <View className="flex-row items-center px-4 py-2">
-        <Pressable onPress={() => router.back()} className="p-2">
-          <Text className="text-white text-sm">{"< Planos"}</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Pressable onPress={() => router.back()} style={styles.backButton}>
+          <Text style={styles.backText}>{"< Planos"}</Text>
         </Pressable>
       </View>
-      <Text className="text-2xl font-bold text-white text-center mb-4">{title}</Text>
-      <ScrollView className="flex-1 p-4">
-        {books.length === 0 && <Text className="text-white/60 text-center">Nenhum livro</Text>}
+      <Text style={styles.title}>{title}</Text>
+      <ScrollView style={styles.list}>
+        {books.length === 0 && <Text style={styles.empty}>Nenhum livro</Text>}
         {books.map((book) => (
           <Pressable key={book.id} onPress={() => router.push(`/${planId}/${book.id}?title=${encodeURIComponent(book.title)}`)}
-            className={`w-full p-4 mb-3 rounded-lg border-2 border-primary ${book.isToday ? 'bg-primary' : 'bg-white'}`}>
-            <View className="flex-row justify-between items-center">
-              <Text className={`text-lg font-bold ${book.isToday ? 'text-white' : 'text-primary'}`}>{book.title}</Text>
-              <View className="text-right">
-                <Text className={`text-sm font-bold ${book.isToday ? 'text-white' : 'text-primary'}`}>{book.donePercentage}%</Text>
-                <Text className={`text-xs ${book.isToday ? 'text-white/70' : 'text-gray-500'}`}>{book.doneChapters}/{book.totalChapters}</Text>
+            style={[styles.bookItem, book.isToday ? styles.bookToday : styles.bookOther]}>
+            <View style={styles.bookRow}>
+              <Text style={[styles.bookTitle, book.isToday ? styles.textWhite : styles.textPrimary]}>{book.title}</Text>
+              <View style={styles.bookStats}>
+                <Text style={[styles.bookPercent, book.isToday ? styles.textWhite : styles.textPrimary]}>{book.donePercentage}%</Text>
+                <Text style={[styles.bookChapters, book.isToday ? styles.textWhite70 : styles.textGray]}>{book.doneChapters}/{book.totalChapters}</Text>
               </View>
             </View>
           </Pressable>
@@ -61,3 +61,27 @@ export default function BookListPage() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#189E50' },
+  loadingText: { color: '#FFFFFF', marginTop: 8 },
+  container: { flex: 1, backgroundColor: '#189E50' },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8 },
+  backButton: { padding: 8 },
+  backText: { color: '#FFFFFF', fontSize: 14 },
+  title: { fontSize: 24, fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center', marginBottom: 16 },
+  list: { flex: 1, padding: 16 },
+  empty: { color: 'rgba(255,255,255,0.6)', textAlign: 'center' },
+  bookItem: { width: '100%', padding: 16, marginBottom: 12, borderRadius: 8, borderWidth: 2, borderColor: '#273107' },
+  bookToday: { backgroundColor: '#273107' },
+  bookOther: { backgroundColor: '#FFFFFF' },
+  bookRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  bookTitle: { fontSize: 18, fontWeight: 'bold' },
+  textWhite: { color: '#FFFFFF' },
+  textPrimary: { color: '#273107' },
+  textWhite70: { color: 'rgba(255,255,255,0.7)' },
+  textGray: { color: '#6B7280' },
+  bookStats: { alignItems: 'flex-end' },
+  bookPercent: { fontSize: 14, fontWeight: 'bold' },
+  bookChapters: { fontSize: 12 },
+});
