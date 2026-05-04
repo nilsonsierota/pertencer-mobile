@@ -79,7 +79,7 @@ export function Wheel({ items, onPress, isBooks = false, showProgress = false, i
           const isSelected = item.id === selected;
           const isToday = item.id === todayItemId;
           
-          let itemStyle: any = styles.item;
+          let itemStyle: any = styles.itemDefault;
           if (isToday) {
             itemStyle = styles.itemToday;
           } else if (isSelected) {
@@ -96,7 +96,7 @@ export function Wheel({ items, onPress, isBooks = false, showProgress = false, i
                 {item.title}
               </Text>
               {showProgress && isBooks && item.donePercentage !== undefined && (
-                <Text style={[{ fontSize: 11, marginTop: 2, color: isSelected ? '#189E50' : '#666' }]}>
+                <Text style={[{ fontSize: 11, marginTop: 2, color: isSelected ? '#189E50' : '#000000' }]}>
                   {item.donePercentage}% ({item.doneChapters}/{item.totalChapters})
                 </Text>
               )}
@@ -134,25 +134,40 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginVertical: 3,
     backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
   },
-  itemSelected: {
+   itemSelected: {
+     width: screenWidth - 60,
+     height: ITEM_HEIGHT,
+     justifyContent: 'center',
+     alignItems: 'center',
+     borderRadius: 12,
+     marginVertical: 3,
+     backgroundColor: '#273107',
+     borderWidth: 2,
+     borderColor: '#189E50',
+   },
+   itemToday: {
+     width: screenWidth - 60,
+     height: ITEM_HEIGHT,
+     justifyContent: 'center',
+     alignItems: 'center',
+     borderRadius: 8,
+     marginVertical: 3,
+     backgroundColor: 'transparent',
+     borderWidth: 3,
+     borderColor: '#0F5D2B',
+   },
+  itemDefault: {
     width: screenWidth - 60,
     height: ITEM_HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 12,
     marginVertical: 3,
-    backgroundColor: '#273107',
-  },
-  itemToday: {
-    width: screenWidth - 60,
-    height: ITEM_HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 16,
-    marginVertical: 3,
     backgroundColor: 'transparent',
-    borderWidth: 4,
-    borderColor: '#273107',
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
   },
 });
