@@ -113,6 +113,77 @@ export const DevotionalService = {
   },
 
   async searchUserDevotionals(userId: string, searchTerm: string): Promise<{ results: SearchResult[]; total: number }> {
-    return { results: [], total: 0 };
+    try {
+      const searchLower = searchTerm.toLowerCase();
+      
+      const userDevotionalsRef = collection(db, "userDevotionals");
+      const devotionalsSnap = await getDocs(query(userDevotionalsRef, where("userId", "==", userId)));
+      
+      const results: SearchResult[] = [];
+      
+      for (const devotionalDoc of devotionalsSnap.docs) {
+        const data = devotionalDoc.data();
+        
+        const answerFields = ['answerOne', 'answerTwo', 'answerThree', 'answerFour', 'answerFive', 'answerSix'];
+        let matchedField = '';
+        let matchedText = '';
+        
+        for (const field of answerFields) {
+          const answer = data[field];
+          if (answer && typeof answer === 'string' && answer.toLowerCase().includes(searchLower)) {
+            matchedField = field;
+            matchedText = answer;
+            break;
+          }
+        }
+        
+        if (matchedText) {
+          const chapterRef = doc(db, "chapters", data.chapterId);
+          const chapterSnap = await getDoc(chapterRef);
+          
+          if (chapterSnap.exists()) {
+            const chapterData = chapterSnap.data();
+            
+            const bookRef = doc(db, "books", data.bookId);
+            const bookSnap = await getDoc(bookRef);
+            
+            let bookTitle = '';
+            let planId = '';
+            let planName = '';
+            
+            if (bookSnap.exists()) {
+              const bookData = bookSnap.data();
+              bookTitle = bookData.title || '';
+              planId = bookData.planId || '';
+              
+              if (planId) {
+                const planRef = doc(db, "plan", planId);
+                const planSnap = await getDoc(planRef);
+                if (planSnap.exists()) {
+                  planName = planSnap.data().name || '';
+                }
+              }
+            }
+            
+            results.push({
+              chapterId: data.chapterId,
+              bookId: data.bookId,
+              planId,
+              bookTitle,
+              planName,
+              chapterNumber: chapterData.number || 0,
+              chapterTitle: chapterData.title || '',
+              matchedText,
+              answerField: matchedField,
+            });
+          }
+        }
+      }
+      
+      return { results, total: results.length };
+    } catch (e) { 
+      console.error(e);
+      return { results: [], total: 0 }; 
+    }
   },
 };

@@ -5,7 +5,8 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../../src/context/AuthContext";
 import { DevotionalService } from "../../../src/services/devotional.service";
 import type { Chapter } from "../../../src/types";
-import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ChapterListPage() {
   const router = useRouter();

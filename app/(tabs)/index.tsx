@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { DevotionalService } from "../../src/services/devotional.service";
@@ -12,6 +12,7 @@ import { Wheel } from "../../src/components/Wheel";
 export default function PlanListPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const [navigating, setNavigating] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -37,6 +38,7 @@ export default function PlanListPage() {
   if (!user) return null;
 
   const handlePlanPress = (plan: any) => {
+    setNavigating(true);
     router.push(`/${plan.id}?title=${encodeURIComponent(plan.title)}`);
   };
 
@@ -53,7 +55,8 @@ export default function PlanListPage() {
         items={planItems} 
         onPress={handlePlanPress} 
         itemColor="#FFFFFF" 
-        showProgress={false} 
+        showProgress={false}
+        loading={navigating}
       />
     </View>
   );

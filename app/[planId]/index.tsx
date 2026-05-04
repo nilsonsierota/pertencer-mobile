@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { DevotionalService } from "../../src/services/devotional.service";
 import type { Book } from "../../src/types";
-import { View, Text, Pressable, ActivityIndicator, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, Pressable, ActivityIndicator, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { Wheel } from "../../src/components/Wheel";
 
@@ -16,6 +17,7 @@ export default function BookListPage() {
   const routeParams = useLocalSearchParams<{ planId: string }>();
   const planId = routeParams.planId;
   const { user, loading: authLoading } = useAuth();
+  const [navigating, setNavigating] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) router.replace("/(auth)/login");
@@ -37,6 +39,7 @@ export default function BookListPage() {
   }
 
   const handleBookPress = (book: Book) => {
+    setNavigating(true);
     router.push(`/${planId}/${book.id}?title=${encodeURIComponent(book.title)}`);
   };
 
@@ -64,6 +67,7 @@ export default function BookListPage() {
         isBooks={true}
         showProgress={true}
         itemColor="#273107"
+        loading={navigating}
       />
     </SafeAreaView>
   );

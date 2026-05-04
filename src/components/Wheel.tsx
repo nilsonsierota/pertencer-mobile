@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { View, Text, Pressable, ScrollView, StyleSheet, Dimensions } from "react-native";
+import { View, Text, Pressable, ScrollView, StyleSheet, Dimensions, ActivityIndicator } from "react-native";
 
 interface WheelItem {
   id: string;
@@ -17,12 +17,13 @@ interface WheelProps {
   isBooks?: boolean;
   showProgress?: boolean;
   itemColor?: string;
+  loading?: boolean;
 }
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 const ITEM_HEIGHT = 50;
 
-export function Wheel({ items, onPress, isBooks = false, showProgress = false, itemColor = '#1b2b1b' }: WheelProps) {
+export function Wheel({ items, onPress, isBooks = false, showProgress = false, itemColor = '#1b2b1b', loading = false }: WheelProps) {
   const [selected, setSelected] = useState<string | null>(items.length > 0 ? items[0].id : null);
   const scrollRef = useRef<ScrollView>(null);
 
@@ -76,6 +77,9 @@ export function Wheel({ items, onPress, isBooks = false, showProgress = false, i
                   {item.donePercentage}% ({item.doneChapters}/{item.totalChapters})
                 </Text>
               )}
+              {loading && isSelected && (
+                <ActivityIndicator size="small" color="#189E50" style={styles.loader} />
+              )}
             </Pressable>
           );
         })}
@@ -122,5 +126,8 @@ const styles = StyleSheet.create({
   },
   progressTextSelected: {
     color: '#189E50',
+  },
+  loader: {
+    marginTop: 4,
   },
 });

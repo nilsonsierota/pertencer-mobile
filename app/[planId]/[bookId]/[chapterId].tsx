@@ -6,7 +6,8 @@ import { useAuth } from "../../../src/context/AuthContext";
 import { DevotionalService } from "../../../src/services/devotional.service";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Alert, StyleSheet, KeyboardAvoidingView, Platform, SafeAreaView } from "react-native";
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Alert, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const questions = [
   "VOCÊ VIU O AGIR DE DEUS NESSE CAPÍTULO?",
