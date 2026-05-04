@@ -1,0 +1,27 @@
+{
+  "book": "ps",
+  "bookName": "Salmos",
+  "chapter": 123,
+  "verses": [
+    {
+      "chapter": 123,
+      "verse": 1,
+      "text": "A ti, que habitas nos céus, elevo os olhos!"
+    },
+    {
+      "chapter": 123,
+      "verse": 2,
+      "text": "Como os olhos dos servos estão fitos nas mãos dos seus senhores, e os olhos da serva, na mão de sua senhora, assim os nossos olhos estão fitos no SENHOR, nosso Deus, até que se compadeça de nós."
+    },
+    {
+      "chapter": 123,
+      "verse": 3,
+      "text": "Tem misericórdia de nós, SENHOR, tem misericórdia; pois estamos sobremodo fartos de desprezo."
+    },
+    {
+      "chapter": 123,
+      "verse": 4,
+      "text": "A nossa alma está saturada do escárnio dos que estão à sua vontade e do desprezo dos soberbos."
+    }
+  ]
+}
