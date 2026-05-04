@@ -95,9 +95,9 @@ export function Wheel({ items, onPress, isBooks = false, showProgress = false, i
                onPress={() => handlePress(item)}
                style={itemStyle}
              >
-               {isToday && (
-                 <View style={innerItemStyle}>
-               )}
+                {isToday ? (
+                  <View style={innerItemStyle}>
+                ) : null}
                <Text style={[{ color: isSelected ? '#FFFFFF' : '#000000', fontWeight: isSelected ? 'bold' : '600' }]}>
                  {item.title}
                </Text>
@@ -109,9 +109,9 @@ export function Wheel({ items, onPress, isBooks = false, showProgress = false, i
                {loading && isSelected && (
                  <ActivityIndicator size="small" color="#189E50" style={{ marginTop: 4 }} />
                )}
-               {isToday && (
-                 </View>
-               )}
+                {isToday ? (
+                  </View>
+                ) : null}
              </Pressable>
           );
         })}
