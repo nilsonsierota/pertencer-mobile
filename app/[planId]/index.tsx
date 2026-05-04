@@ -5,10 +5,11 @@ import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { DevotionalService } from "../../src/services/devotional.service";
 import type { Book } from "../../src/types";
-import { View, Text, Pressable, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { Wheel } from "../../src/components/Wheel";
+import { Loading } from "../../src/components/Loading";
 
 export default function BookListPage() {
   const router = useRouter();
@@ -34,12 +35,7 @@ export default function BookListPage() {
   });
 
   if (authLoading || isLoading) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#FFFFFF" />
-        <Text style={styles.loadingText}>Carregando livros...</Text>
-      </View>
-    );
+    return <Loading />;
   }
 
   const handleBookPress = (book: Book) => {

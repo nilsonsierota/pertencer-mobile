@@ -5,9 +5,10 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { DevotionalService } from "../../src/services/devotional.service";
 import type { Plan } from "../../src/types";
-import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { Wheel } from "../../src/components/Wheel";
+import { Loading } from "../../src/components/Loading";
 
 export default function PlanListPage() {
   const { user, loading: authLoading } = useAuth();
@@ -31,12 +32,7 @@ export default function PlanListPage() {
   });
 
   if (authLoading || isLoading) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#FFFFFF" />
-        <Text style={styles.loadingText}>Carregando planos...</Text>
-      </View>
-    );
+    return <Loading />;
   }
 
   if (!user) return null;

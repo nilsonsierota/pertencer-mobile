@@ -2,7 +2,7 @@
 
 import { Tabs, useRouter } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 
@@ -19,8 +19,7 @@ export default function TabLayout() {
   if (loading) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#189E50' }}>
-        <ActivityIndicator size="large" color="#189E50" />
-        <Text style={{ color: '#6B7280', marginTop: 8 }}>Carregando...</Text>
+        <Image source={require("../../assets/Logo. 25 [GIF].gif")} style={{ width: 120, height: 120, resizeMode: 'contain' }} />
       </View>
     );
   }
@@ -34,7 +33,7 @@ export default function TabLayout() {
         headerShown: true,
         headerStyle: { backgroundColor: "#189E50" },
         headerTintColor: "#FFFFFF",
-        headerTitleStyle: { fontWeight: "bold" },
+        headerTitle: () => <Image source={require("../../assets/logo-pertencer.png")} style={{ width: 140, height: 40, resizeMode: 'contain' }} />,
       }}
     >
       <Tabs.Screen

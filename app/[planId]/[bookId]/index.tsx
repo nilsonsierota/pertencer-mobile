@@ -5,8 +5,9 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../../src/context/AuthContext";
 import { DevotionalService } from "../../../src/services/devotional.service";
 import type { Chapter } from "../../../src/types";
-import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Loading } from "../../../src/components/Loading";
 
 export default function ChapterListPage() {
   const router = useRouter();
@@ -25,12 +26,7 @@ export default function ChapterListPage() {
   }, [bookId, user]);
 
   if (loading) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" color="#FFFFFF" />
-        <Text style={styles.loadingText}>Carregando capitulos...</Text>
-      </View>
-    );
+    return <Loading />;
   }
 
   return (

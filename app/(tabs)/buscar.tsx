@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { DevotionalService } from "../../src/services/devotional.service";
 import type { SearchResult } from "../../src/types";
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Image } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 
 export default function BuscarPage() {
@@ -36,7 +36,7 @@ export default function BuscarPage() {
   const total = data?.total ?? 0;
 
   if (authLoading) {
-    return <View style={styles.loading}><ActivityIndicator size="large" color="#FFFFFF" /></View>;
+    return <View style={styles.loading}><Image source={require("../../assets/Logo. 25 [GIF].gif")} style={{ width: 80, height: 80 }} /></View>;
   }
 
   if (!user) return null;
@@ -58,7 +58,7 @@ export default function BuscarPage() {
           <Text style={styles.buttonText}>{searching ? "Buscando..." : "Buscar"}</Text>
         </Pressable>
 
-        {searching && <View style={styles.loadingContainer}><ActivityIndicator size="large" color="#FFFFFF" /></View>}
+        {searching && <View style={styles.loadingContainer}><Image source={require("../../assets/Logo. 25 [GIF].gif")} style={{ width: 60, height: 60 }} /></View>}
         {!searching && hasSearched && total === 0 && <Text style={styles.noResults}>Nenhum resultado para "{searchTerm}"</Text>}
         {total > 0 && (
           <ScrollView style={styles.results} keyboardShouldPersistTaps="handled">

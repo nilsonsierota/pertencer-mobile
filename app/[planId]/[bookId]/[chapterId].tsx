@@ -6,7 +6,7 @@ import { useAuth } from "../../../src/context/AuthContext";
 import { DevotionalService } from "../../../src/services/devotional.service";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Alert, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Alert, StyleSheet, KeyboardAvoidingView, Platform, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const questions = [
@@ -69,22 +69,59 @@ export default function QuestionsPage() {
 
   const handleSharePdf = async () => {
     try {
-      const html = `<html><head><style>body{font-family:Arial;padding:20px}h1{font-size:18px}.q{font-size:12px;font-weight:bold;margin-top:15px}.a{font-size:11px;margin-bottom:15px;color:#555}</style></head><body><h1>${title} ${chapter}</h1>${questions.map((q,i)=>`<div class="q">${q}</div><div class="a">${answers[i]||'—'}</div>`).join('')}</body></html>`;
-      console.log("Generating PDF...");
-      const { uri } = await Print.printAsync({ html });
-      console.log("PDF generated at:", uri);
+      const html = `
+<html>
+<head>
+<style>
+  body { font-family: Arial; padding: 0; margin: 0; color: #FFFFFF; background-image: url('https://raw.githubusercontent.com/nilsonsierota/pertencer-mobile/master/assets/sub-meditacao-base.png'); background-size: cover; background-position: center; min-height: 100vh; }
+  .container { min-height: 100vh; display: flex; flex-direction: column; }
+  .header { background-color: rgba(39, 49, 7, 0.85); padding: 16px; text-align: center; }
+  .logo { font-size: 22px; font-weight: bold; color: #FFFFFF; }
+  .subtitle { font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 2px; }
+  .content { padding: 16px; flex: 1; }
+  h1 { font-size: 16px; text-align: center; margin-bottom: 16px; background-color: rgba(39, 49, 7, 0.9); padding: 10px; border-radius: 8px; }
+  .q { font-size: 12px; font-weight: bold; margin-top: 12px; text-transform: uppercase; color: #FFFFFF; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+  .a { font-size: 12px; margin-top: 4px; margin-bottom: 12px; padding: 8px; background-color: rgba(255,255,255,0.95); border-radius: 6px; color: #273107; min-height: 40px; }
+  .done { margin-top: 16px; font-weight: bold; text-align: center; padding: 10px; background-color: rgba(24, 158, 80, 0.9); border-radius: 6px; }
+  .footer { background-color: rgba(39, 49, 7, 0.85); padding: 14px; text-align: center; }
+  .footer-text { font-size: 11px; color: rgba(255,255,255,0.7); }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+  <div class="logo">PERTENCER</div>
+  <div class="subtitle"> devotional diário</div>
+</div>
+<div class="content">
+<h1>${title} - Capítulo ${chapter}</h1>
+${questions.map((q, i) => `
+<div class="q">${q}</div>
+<div class="a">${answers[i] || '—'}</div>
+`).join('')}
+${isDone ? '<div class="done">✓ Meditação concluída</div>' : ''}
+</div>
+<div class="footer">
+  <div class="footer-text">Pertencer - © ${new Date().getFullYear()}</div>
+</div>
+</div>
+</body>
+</html>`;
+      
+      const printer = await Print.printToFileAsync({ html });
       const isAvailable = await Sharing.isAvailableAsync();
-      console.log("Sharing available:", isAvailable);
       if (isAvailable) {
-        await Sharing.shareAsync(uri, { mimeType: "application/pdf", dialogTitle: "Minha Meditação" });
+        await Sharing.shareAsync(printer.uri, { mimeType: "application/pdf", dialogTitle: "Minha Meditação" });
       }
     } catch (e) { 
-      console.error("PDF Error:", e);
-      Alert.alert("Erro", "Falha ao gerar PDF: " + (e?.message || e)); 
+      if (e?.message?.includes('Printing did not complete') || e?.message?.includes('cancelled')) {
+        return;
+      }
+      Alert.alert("Erro", "Falha ao gerar PDF");
     }
   };
 
-  if (loading) return <View style={styles.loading}><ActivityIndicator size="large" color="#FFFFFF" /></View>;
+  if (loading) return <View style={styles.loading}><Image source={require("../../../assets/Logo. 25 [GIF].gif")} style={{ width: 80, height: 80 }} /></View>;
 
   return (
     <SafeAreaView style={styles.container}>
