@@ -6,7 +6,7 @@ import { useAuth } from "../../../src/context/AuthContext";
 import { DevotionalService } from "../../../src/services/devotional.service";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Alert, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Alert, StyleSheet, KeyboardAvoidingView, Platform, SafeAreaView } from "react-native";
 
 const questions = [
   "VOCÊ VIU O AGIR DE DEUS NESSE CAPÍTULO?",
@@ -79,6 +79,7 @@ export default function QuestionsPage() {
   if (loading) return <View style={styles.loading}><ActivityIndicator size="large" color="#FFFFFF" /></View>;
 
   return (
+    <SafeAreaView style={styles.container}>
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={100}>
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}><Text style={styles.backText}>{"< Capitulos"}</Text></Pressable>
@@ -117,6 +118,7 @@ export default function QuestionsPage() {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 

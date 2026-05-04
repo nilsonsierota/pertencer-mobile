@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { DevotionalService } from "../../src/services/devotional.service";
 import type { Book } from "../../src/types";
-import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, Pressable, ActivityIndicator, StyleSheet, SafeAreaView } from "react-native";
 import { useQuery } from "@tanstack/react-query";
+import { Wheel } from "../../src/components/Wheel";
 
 export default function BookListPage() {
   const router = useRouter();
@@ -35,30 +36,36 @@ export default function BookListPage() {
     );
   }
 
+  const handleBookPress = (book: Book) => {
+    router.push(`/${planId}/${book.id}?title=${encodeURIComponent(book.title)}`);
+  };
+
+  const bookItems = books
+    .filter(book => book.title)
+    .map(book => ({
+    id: book.id,
+    title: book.title,
+    donePercentage: book.donePercentage,
+    doneChapters: book.doneChapters,
+    totalChapters: book.totalChapters,
+  }));
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
           <Text style={styles.backText}>{"< Planos"}</Text>
         </Pressable>
       </View>
       <Text style={styles.title}>{title}</Text>
-      <ScrollView style={styles.list}>
-        {books.length === 0 && <Text style={styles.empty}>Nenhum livro</Text>}
-        {books.map((book) => (
-          <Pressable key={book.id} onPress={() => router.push(`/${planId}/${book.id}?title=${encodeURIComponent(book.title)}`)}
-            style={[styles.bookItem, book.isToday ? styles.bookToday : styles.bookOther]}>
-            <View style={styles.bookRow}>
-              <Text style={[styles.bookTitle, book.isToday ? styles.textWhite : styles.textPrimary]}>{book.title}</Text>
-              <View style={styles.bookStats}>
-                <Text style={[styles.bookPercent, book.isToday ? styles.textWhite : styles.textPrimary]}>{book.donePercentage}%</Text>
-                <Text style={[styles.bookChapters, book.isToday ? styles.textWhite70 : styles.textGray]}>{book.doneChapters}/{book.totalChapters}</Text>
-              </View>
-            </View>
-          </Pressable>
-        ))}
-      </ScrollView>
-    </View>
+      <Wheel 
+        items={bookItems} 
+        onPress={handleBookPress} 
+        isBooks={true}
+        showProgress={true}
+        itemColor="#273107"
+      />
+    </SafeAreaView>
   );
 }
 
@@ -69,19 +76,5 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8 },
   backButton: { padding: 8 },
   backText: { color: '#FFFFFF', fontSize: 14 },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center', marginBottom: 16 },
-  list: { flex: 1, padding: 16 },
-  empty: { color: 'rgba(255,255,255,0.6)', textAlign: 'center' },
-  bookItem: { width: '100%', padding: 16, marginBottom: 12, borderRadius: 8, borderWidth: 2, borderColor: '#273107' },
-  bookToday: { backgroundColor: '#273107' },
-  bookOther: { backgroundColor: '#FFFFFF' },
-  bookRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  bookTitle: { fontSize: 18, fontWeight: 'bold' },
-  textWhite: { color: '#FFFFFF' },
-  textPrimary: { color: '#273107' },
-  textWhite70: { color: 'rgba(255,255,255,0.7)' },
-  textGray: { color: '#6B7280' },
-  bookStats: { alignItems: 'flex-end' },
-  bookPercent: { fontSize: 14, fontWeight: 'bold' },
-  bookChapters: { fontSize: 12 },
+  title: { fontSize: 24, fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center', marginBottom: 8 },
 });

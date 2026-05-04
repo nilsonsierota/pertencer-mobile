@@ -5,7 +5,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../../src/context/AuthContext";
 import { DevotionalService } from "../../../src/services/devotional.service";
 import type { Chapter } from "../../../src/types";
-import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, ScrollView, Pressable, ActivityIndicator, StyleSheet, SafeAreaView } from "react-native";
 
 export default function ChapterListPage() {
   const router = useRouter();
@@ -33,7 +33,7 @@ export default function ChapterListPage() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
           <Text style={styles.backText}>{"< Livros"}</Text>
@@ -60,7 +60,7 @@ export default function ChapterListPage() {
           })}
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
