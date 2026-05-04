@@ -58,12 +58,10 @@ export default function QuestionsPage() {
 
   useEffect(() => {
     const bookName = bookKey || (title ? title.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : null);
-    console.log("Bible - bookName:", bookName, "chapter:", chapter, "version:", bibleVersion.id);
     if (!bookName || !chapter) return;
     setBibleLoading(true);
     const chapterNum = parseInt(chapter as string, 10);
     BibleService.getChapter(bookName, chapterNum, bibleVersion.id).then(data => {
-      console.log("Bible - data:", data);
       setBibleChapter(data);
       setBibleLoading(false);
     });
