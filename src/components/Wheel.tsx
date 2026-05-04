@@ -80,41 +80,49 @@ export function Wheel({ items, onPress, isBooks = false, showProgress = false, i
           const isToday = item.id === todayItemId;
           
            let itemStyle: any = styles.itemDefault;
-           let innerItemStyle: any = {};
+           let innerStyle: any = {};
            
            if (isToday) {
-             itemStyle = styles.itemTodayOuter;
-             innerItemStyle = styles.itemTodayInner;
+             itemStyle = styles.itemToday;
+             if (isSelected) {
+               innerStyle = { backgroundColor: '#273107' };
+             }
            } else if (isSelected) {
              itemStyle = styles.itemSelected;
            }
-          
-          return (
-             <Pressable
-               key={item.id}
-               onPress={() => handlePress(item)}
-               style={itemStyle}
-             >
-                {isToday ? (
-                  <View style={innerItemStyle}>
-                ) : null}
-               <Text style={[{ color: isSelected ? '#FFFFFF' : '#000000', fontWeight: isSelected ? 'bold' : '600' }]}>
+  
+           const content = (
+             <>
+               <Text style={[{ color: (isSelected || isToday) ? '#FFFFFF' : '#000000', fontWeight: (isSelected || isToday) ? 'bold' : '600' }]}>
                  {item.title}
                </Text>
                {showProgress && isBooks && item.donePercentage !== undefined && (
-                 <Text style={[{ fontSize: 11, marginTop: 2, color: isSelected ? '#189E50' : '#000000' }]}>
+                 <Text style={[{ fontSize: 11, marginTop: 2, color: (isSelected || isToday) ? '#FFFFFF' : '#000000' }]}>
                    {item.donePercentage}% ({item.doneChapters}/{item.totalChapters})
                  </Text>
                )}
                {loading && isSelected && (
-                 <ActivityIndicator size="small" color="#189E50" style={{ marginTop: 4 }} />
+                 <ActivityIndicator size="small" color="#FFFFFF" style={{ marginTop: 4 }} />
                )}
+             </>
+           );
+           
+           return (
+              <Pressable
+                key={item.id}
+                onPress={() => handlePress(item)}
+                style={itemStyle}
+              >
                 {isToday ? (
+                  <View style={[styles.itemTodayInner, innerStyle]}>
+                    {content}
                   </View>
-                ) : null}
-             </Pressable>
-          );
-        })}
+                ) : (
+                  content
+                )}
+              </Pressable>
+           );
+         })}
         
         <View style={{ height: screenHeight * 0.4 }} />
       </ScrollView>
@@ -146,33 +154,32 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#CCCCCC',
   },
-   itemSelected: {
-     width: screenWidth - 60,
-     height: ITEM_HEIGHT,
-     justifyContent: 'center',
-     alignItems: 'center',
-     borderRadius: 12,
-     marginVertical: 3,
-     backgroundColor: '#273107',
-     borderWidth: 2,
-     borderColor: '#189E50',
-   },
-   itemTodayOuter: {
-     width: screenWidth - 60,
-     height: ITEM_HEIGHT,
-     borderRadius: 8,
-     marginVertical: 3,
-     borderWidth: 3,
-     borderColor: '#0F5D2B',
-   },
-   itemTodayInner: {
-     width: screenWidth - 68, // 60 - 4*2 (2px on each side)
-     height: ITEM_HEIGHT - 8, // 60 - 4*2 (2px on each side)
-     justifyContent: 'center',
-     alignItems: 'center',
-     borderRadius: 6, // 8 - 2
-     backgroundColor: '#0F5D2B',
-   },
+    itemSelected: {
+      width: screenWidth - 60,
+      height: ITEM_HEIGHT,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 12,
+      marginVertical: 3,
+      backgroundColor: '#273107',
+      borderWidth: 2,
+      borderColor: '#189E50',
+    },
+    itemToday: {
+      width: screenWidth - 60,
+      height: ITEM_HEIGHT,
+      borderRadius: 12,
+      marginVertical: 3,
+      borderWidth: 3,
+      borderColor: '#273107',
+      padding: 2,
+    },
+    itemTodayInner: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 10,
+    },
    itemDefault: {
      width: screenWidth - 60,
      height: ITEM_HEIGHT,
