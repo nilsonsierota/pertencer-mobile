@@ -4,10 +4,12 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../../src/context/AuthContext";
 import { DevotionalService } from "../../../src/services/devotional.service";
+import { BibleService, BIBLE_VERSIONS } from "../../../src/services/bible.service";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Alert, StyleSheet, KeyboardAvoidingView, Platform, Image } from "react-native";
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Alert, StyleSheet, KeyboardAvoidingView, Platform, Image, Modal, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import type { BibleVersion, ChapterData } from "../../../src/types";
 
 const questions = [
   "VOCÊ VIU O AGIR DE DEUS NESSE CAPÍTULO?",
@@ -20,9 +22,10 @@ const questions = [
 
 export default function QuestionsPage() {
   const router = useRouter();
-  const searchParams = useLocalSearchParams<{ title?: string; chapter?: string }>();
+  const searchParams = useLocalSearchParams<{ title?: string; chapter?: string; bookKey?: string }>();
   const title = searchParams.title;
   const chapter = searchParams.chapter;
+  const bookKey = searchParams.bookKey;
   const params = useLocalSearchParams<{ planId: string; bookId: string; chapterId: string }>();
   const planId = params.planId;
   const bookId = params.bookId;
@@ -33,6 +36,10 @@ export default function QuestionsPage() {
   const [isDone, setIsDone] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [bibleVersion, setBibleVersion] = useState<BibleVersion>(BIBLE_VERSIONS[0]);
+  const [bibleChapter, setBibleChapter] = useState<ChapterData | null>(null);
+  const [bibleLoading, setBibleLoading] = useState(false);
+  const [showVersionModal, setShowVersionModal] = useState(false);
 
   useEffect(() => {
     if (!user || !chapterId) { setLoading(false); return; }
@@ -45,8 +52,29 @@ export default function QuestionsPage() {
     });
   }, [user, chapterId]);
 
+  useEffect(() => {
+    BibleService.getSavedVersion().then(v => setBibleVersion(v));
+  }, []);
+
+  useEffect(() => {
+    const bookName = bookKey || (title ? title.toString().toLowerCase() : null);
+    if (!bookName || !chapter) return;
+    setBibleLoading(true);
+    const chapterNum = parseInt(chapter as string, 10);
+    BibleService.getChapter(bookName, chapterNum, bibleVersion.id).then(data => {
+      setBibleChapter(data);
+      setBibleLoading(false);
+    });
+  }, [bookKey, title, chapter, bibleVersion.id]);
+
   const handleAnswerChange = (index: number, value: string) => {
     setAnswers(prev => { const u = [...prev]; u[index] = value; return u; });
+  };
+
+  const handleVersionChange = async (version: BibleVersion) => {
+    setBibleVersion(version);
+    await BibleService.setVersion(version);
+    setShowVersionModal(false);
   };
 
   const handleSave = async () => {
@@ -70,40 +98,129 @@ export default function QuestionsPage() {
   const handleSharePdf = async () => {
     try {
       const html = `
+<!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
 <style>
-  body { font-family: Arial; padding: 0; margin: 0; color: #FFFFFF; background-image: url('https://raw.githubusercontent.com/nilsonsierota/pertencer-mobile/master/assets/sub-meditacao-base.png'); background-size: cover; background-position: center; min-height: 100vh; }
-  .container { min-height: 100vh; display: flex; flex-direction: column; }
-  .header { background-color: rgba(39, 49, 7, 0.85); padding: 16px; text-align: center; }
-  .logo { font-size: 22px; font-weight: bold; color: #FFFFFF; }
-  .subtitle { font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 2px; }
-  .content { padding: 16px; flex: 1; }
-  h1 { font-size: 16px; text-align: center; margin-bottom: 16px; background-color: rgba(39, 49, 7, 0.9); padding: 10px; border-radius: 8px; }
-  .q { font-size: 12px; font-weight: bold; margin-top: 12px; text-transform: uppercase; color: #FFFFFF; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
-  .a { font-size: 12px; margin-top: 4px; margin-bottom: 12px; padding: 8px; background-color: rgba(255,255,255,0.95); border-radius: 6px; color: #273107; min-height: 40px; }
-  .done { margin-top: 16px; font-weight: bold; text-align: center; padding: 10px; background-color: rgba(24, 158, 80, 0.9); border-radius: 6px; }
-  .footer { background-color: rgba(39, 49, 7, 0.85); padding: 14px; text-align: center; }
-  .footer-text { font-size: 11px; color: rgba(255,255,255,0.7); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; }
+  body { 
+    font-family: Helvetica, Arial, sans-serif; 
+    color: #FFFFFF; 
+    background-color: #189E50;
+    padding: 0;
+    margin: 0;
+  }
+  .page {
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+    background-color: #189E50;
+  }
+  .header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background-color: #273107;
+  }
+  .logo {
+    position: absolute;
+    top: 20px;
+    left: 25px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFFFFF;
+    letter-spacing: 2px;
+  }
+  .subtitle {
+    position: absolute;
+    top: 50px;
+    left: 25px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.8);
+  }
+  .content {
+    position: relative;
+    padding: 120px 25px 70px 25px;
+  }
+  h1 {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 25px;
+    padding: 10px 0;
+    color: #FFFFFF;
+  }
+  .question {
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    margin-top: 18px;
+    margin-bottom: 8px;
+  }
+  .answer {
+    font-size: 10px;
+    color: #273107;
+    background-color: #FFFFFF;
+    padding: 10px;
+    border-radius: 6px;
+    min-height: 45px;
+    margin-bottom: 18px;
+  }
+  .done {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    padding: 12px;
+    background-color: #189E50;
+    border-radius: 6px;
+    margin-top: 20px;
+  }
+  .footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: #273107;
+  }
+  .footer-text {
+    position: absolute;
+    top: 22px;
+    left: 25px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+  }
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  @media print {
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
 </style>
 </head>
 <body>
-<div class="container">
-<div class="header">
-  <div class="logo">PERTENCER</div>
-  <div class="subtitle"> devotional diário</div>
-</div>
-<div class="content">
-<h1>${title} - Capítulo ${chapter}</h1>
-${questions.map((q, i) => `
-<div class="q">${q}</div>
-<div class="a">${answers[i] || '—'}</div>
-`).join('')}
-${isDone ? '<div class="done">✓ Meditação concluída</div>' : ''}
-</div>
-<div class="footer">
-  <div class="footer-text">Pertencer - © ${new Date().getFullYear()}</div>
-</div>
+<div class="page">
+  <div class="header">
+    <div class="logo">PERTENCER</div>
+    <div class="subtitle">devocional diário</div>
+  </div>
+  <div class="content">
+    <h1>${title} ${chapter}</h1>
+    ${questions.map((q, i) => `
+      <div class="question">${q}</div>
+      <div class="answer">${answers[i] || '—'}</div>
+    `).join('')}
+    ${isDone ? '<div class="done">✓ Meditação concluída</div>' : ''}
+  </div>
+  <div class="footer">
+    <div class="footer-text">Pertencer - © ${new Date().getFullYear()}</div>
+  </div>
 </div>
 </body>
 </html>`;
@@ -130,7 +247,31 @@ ${isDone ? '<div class="done">✓ Meditação concluída</div>' : ''}
         <Pressable onPress={() => router.back()} style={styles.backButton}><Text style={styles.backText}>{"< Capitulos"}</Text></Pressable>
       </View>
       <Text style={styles.title}>{title} {chapter}</Text>
+      
+      <Pressable style={styles.versionSelector} onPress={() => setShowVersionModal(true)}>
+        <Text style={styles.versionText}>{bibleVersion.name}</Text>
+        <Text style={styles.versionArrow}>▼</Text>
+      </Pressable>
+
       <ScrollView style={styles.content} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContent}>
+        {bibleChapter && bibleChapter.verses.length > 0 && (
+          <View style={styles.bibleSection}>
+            <Text style={styles.bibleReference}>{bibleChapter.bookName} {bibleChapter.chapter}</Text>
+            {bibleChapter.verses.map((verse, idx) => (
+              <Text key={idx} style={styles.verseText}>
+                <Text style={styles.verseNumber}>{verse.verse} </Text>{verse.text}
+              </Text>
+            ))}
+          </View>
+        )}
+        {bibleLoading && (
+          <View style={styles.bibleLoading}>
+            <ActivityIndicator size="small" color="#FFFFFF" />
+            <Text style={styles.bibleLoadingText}>Carregando texto bíblico...</Text>
+          </View>
+        )}
+
+        <Text style={styles.questionsTitle}>REFLEXÃO</Text>
         {questions.map((q, i) => (
           <View key={i} style={styles.question}>
             <Text style={styles.questionText}>{q}</Text>
@@ -163,6 +304,13 @@ ${isDone ? '<div class="done">✓ Meditação concluída</div>' : ''}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    <VersionModal 
+      visible={showVersionModal} 
+      versions={BIBLE_VERSIONS} 
+      selected={bibleVersion} 
+      onSelect={handleVersionChange} 
+      onClose={() => setShowVersionModal(false)} 
+    />
     </SafeAreaView>
   );
 }
@@ -198,4 +346,38 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', justifyContent: 'center', gap: 16, marginBottom: 40 },
   actionButton: { paddingHorizontal: 24, paddingVertical: 12, backgroundColor: '#273107', borderRadius: 8, minWidth: 120, alignItems: 'center' },
   actionText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 14 },
+  versionSelector: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#273107', paddingVertical: 8, paddingHorizontal: 16, marginHorizontal: 16, borderRadius: 8, marginBottom: 8 },
+  versionText: { color: '#FFFFFF', fontSize: 14, fontWeight: '600' },
+  versionArrow: { color: '#FFFFFF', fontSize: 10, marginLeft: 8 },
+  bibleSection: { backgroundColor: '#FFFFFF', borderRadius: 8, padding: 16, marginBottom: 16 },
+  bibleReference: { fontSize: 16, fontWeight: 'bold', color: '#273107', marginBottom: 12, textAlign: 'center' },
+  verseText: { fontSize: 14, color: '#273107', lineHeight: 22, marginBottom: 8, textAlign: 'justify' },
+  verseNumber: { fontWeight: 'bold', color: '#189E50' },
+  bibleLoading: { alignItems: 'center', padding: 20 },
+  bibleLoadingText: { color: '#FFFFFF', marginTop: 8, fontSize: 12 },
+  questionsTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center', marginVertical: 16, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.3)' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center' },
+  modalContent: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 20, width: '85%', maxHeight: '70%' },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#273107', textAlign: 'center', marginBottom: 16 },
+  modalOption: { paddingVertical: 14, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: '#E5E7EB' },
+  modalOptionSelected: { backgroundColor: '#189E50' },
+  modalOptionText: { fontSize: 16, color: '#273107' },
+  modalOptionTextSelected: { color: '#FFFFFF' },
+  modalOptionAbbr: { fontSize: 12, color: '#6B7280', marginTop: 2 },
 });
+
+const VersionModal = ({ visible, versions, selected, onSelect, onClose }: { visible: boolean; versions: BibleVersion[]; selected: BibleVersion; onSelect: (v: BibleVersion) => void; onClose: () => void }) => (
+  <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={onClose}>
+      <View style={styles.modalContent}>
+        <Text style={styles.modalTitle}>Selecione a Versão</Text>
+        {versions.map(v => (
+          <TouchableOpacity key={v.id} style={[styles.modalOption, selected.id === v.id && styles.modalOptionSelected]} onPress={() => onSelect(v)}>
+            <Text style={[styles.modalOptionText, selected.id === v.id && styles.modalOptionTextSelected]}>{v.name}</Text>
+            <Text style={[styles.modalOptionAbbr, selected.id === v.id && styles.modalOptionTextSelected]}>({v.abbreviation})</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </TouchableOpacity>
+  </Modal>
+);

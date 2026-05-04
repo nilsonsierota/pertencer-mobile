@@ -47,9 +47,10 @@ export default function ChapterListPage() {
             if (isToday) { bgColor = isDone ? styles.chapterDoneToday : styles.chapterToday; }
             else if (isDone) { bgColor = styles.chapterDone; textColor = styles.textPrimary; }
 
+            const bookKey = title ? title.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
             return (
               <Pressable key={chapter.id}
-                onPress={() => router.push(`/${planId}/${bookId}/${chapter.id}?title=${encodeURIComponent(title||'')}&chapter=${chapter.number}`)}
+                onPress={() => router.push(`/${planId}/${bookId}/${chapter.id}?title=${encodeURIComponent(title||'')}&chapter=${chapter.number}&bookKey=${encodeURIComponent(bookKey)}`)}
                 style={[styles.chapterButton, bgColor, textColor]}>
                 <Text style={[styles.chapterNumber, textColor]}>{chapter.number}</Text>
               </Pressable>

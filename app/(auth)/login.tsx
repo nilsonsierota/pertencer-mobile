@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "expo-router";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithCredential, GoogleAuthProvider } from "firebase/auth";
 import { auth as firebaseAuth } from "../../src/services/firebase";
 import { DevotionalService } from "../../src/services/devotional.service";
 import { useAuth } from "../../src/context/AuthContext";
+import * as WebBrowser from "expo-web-browser";
 import { View, Text, TextInput, Pressable, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Alert } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function LoginPage() {
   const [tab, setTab] = useState<"login" | "register">("login");
@@ -15,6 +17,33 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { user } = useAuth();
+  
+  const handleGoogleLogin = useCallback(async () => {
+    setLoading(true);
+    try {
+      const redirectUri = "https://auth.expo.io/@pertencer/pertencer-mobile";
+      
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=openid%20profile%20email&access_type=offline`;
+      
+      const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
+      
+      if (result.type === "success" && result.url) {
+        const hash = result.url.split("#")[1];
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get("access_token");
+        
+        if (accessToken) {
+          const credential = GoogleAuthProvider.credential(accessToken);
+          await signInWithCredential(firebaseAuth!, credential);
+          router.replace("/(tabs)");
+        }
+      }
+    } catch (err: any) {
+      console.log("Google login error:", err);
+      setErrors({ general: "Erro ao fazer login com Google" });
+    }
+    setLoading(false);
+  }, []);
 
   useEffect(() => { if (user) router.replace("/(tabs)"); }, [user]);
 
@@ -33,7 +62,7 @@ export default function LoginPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const cred = await signInWithEmailAndPassword(firebaseAuth, form.email, form.password);
+      const cred = await signInWithEmailAndPassword(firebaseAuth!, form.email, form.password);
       await DevotionalService.findUser({ uid: cred.user.uid, email: cred.user.email || "", displayName: cred.user.displayName || "" });
       router.replace("/(tabs)");
     } catch (err: any) { 
@@ -46,7 +75,7 @@ export default function LoginPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const cred = await createUserWithEmailAndPassword(firebaseAuth, form.email, form.password);
+      const cred = await createUserWithEmailAndPassword(firebaseAuth!, form.email, form.password);
       await DevotionalService.saveUser({ uid: cred.user.uid, email: cred.user.email || "", displayName: form.name || cred.user.displayName || "" });
       router.replace("/(tabs)");
     } catch (err: any) { 
@@ -93,6 +122,15 @@ export default function LoginPage() {
             <Pressable onPress={tab === "login" ? handleLogin : handleRegister} disabled={loading} style={styles.button}>
               {loading ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.buttonText}>{tab === "login" ? "Entrar" : "Registrar"}</Text>}
             </Pressable>
+            <View style={styles.divider}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>ou</Text>
+              <View style={styles.dividerLine} />
+            </View>
+            <Pressable onPress={handleGoogleLogin} disabled={loading} style={styles.googleButton}>
+              <Ionicons name="logo-google" size={20} color="#4285F4" style={styles.googleIcon} />
+              <Text style={styles.googleButtonText}>Entrar com Google</Text>
+            </Pressable>
           </View>
         </View>
       </ScrollView>
@@ -121,4 +159,10 @@ const styles = StyleSheet.create({
   errorCenter: { color: '#EF4444', fontSize: 12, textAlign: 'center', marginBottom: 16 },
   button: { width: '100%', paddingVertical: 12, backgroundColor: '#189E50', borderRadius: 8 },
   buttonText: { color: '#FFFFFF', textAlign: 'center', fontWeight: 'bold', fontSize: 16 },
+  googleButton: { width: '100%', paddingVertical: 12, backgroundColor: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#9CA3AF', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  googleIcon: { marginRight: 8 },
+  googleButtonText: { color: '#374151', fontWeight: '600', fontSize: 16 },
+  divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20, width: '100%' },
+  dividerLine: { flex: 1, height: 1, backgroundColor: '#E5E7EB' },
+  dividerText: { color: '#9CA3AF', marginHorizontal: 12, fontSize: 14 },
 });
