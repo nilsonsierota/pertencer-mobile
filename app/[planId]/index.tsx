@@ -34,6 +34,8 @@ export default function BookListPage() {
     queryFn: () => DevotionalService.getBooks(user!.uid, planId!),
   });
 
+  const todayBookId = books.find(b => b.isToday)?.id || null;
+
   if (authLoading || isLoading) {
     return <Loading />;
   }
@@ -68,6 +70,8 @@ export default function BookListPage() {
         showProgress={true}
         itemColor="#273107"
         loading={navigating}
+        initialSelectedId={todayBookId}
+        todayItemId={todayBookId}
       />
     </SafeAreaView>
   );

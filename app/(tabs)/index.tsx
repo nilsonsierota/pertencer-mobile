@@ -51,13 +51,15 @@ export default function PlanListPage() {
 
   return (
     <View style={styles.container}>
-      <Wheel 
-        items={planItems} 
-        onPress={handlePlanPress} 
-        itemColor="#FFFFFF" 
-        showProgress={false}
-        loading={navigating}
-      />
+      <View style={styles.wheelWrapper}>
+        <Wheel 
+          items={planItems} 
+          onPress={handlePlanPress} 
+          itemColor="#FFFFFF" 
+          showProgress={false}
+          loading={navigating}
+        />
+      </View>
     </View>
   );
 }
@@ -76,5 +78,10 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1, 
     backgroundColor: '#189E50' 
+  },
+  wheelWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

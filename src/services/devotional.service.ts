@@ -38,13 +38,24 @@ export const DevotionalService = {
         }
       });
       
+      const today = new Date().toISOString().split('T')[0];
+      let todayBookId: string | null = null;
+      
+      chaptersSnap.docs.forEach(d => {
+        const chapterData = d.data();
+        if (chapterData.devotionalDate === today && !todayBookId) {
+          todayBookId = chapterData.bookId;
+        }
+      });
+      
       return booksSnap.docs.map(d => {
         const data = d.data();
         const bookId = d.id;
         const totalChapters = chapterCountByBook[bookId] || 0;
         const doneChapters = bookProgress[bookId] || 0;
         const donePercentage = totalChapters > 0 ? Math.round((doneChapters / totalChapters) * 100) : 0;
-        return { id: bookId, ...data, isToday: false, totalChapters, doneChapters, donePercentage } as Book;
+        const isTodayBook = bookId === todayBookId;
+        return { id: bookId, ...data, isToday: isTodayBook, totalChapters, doneChapters, donePercentage } as Book;
       });
     } catch (e) { console.error(e); return []; }
   },
