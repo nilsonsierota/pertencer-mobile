@@ -70,11 +70,18 @@ export default function QuestionsPage() {
   const handleSharePdf = async () => {
     try {
       const html = `<html><head><style>body{font-family:Arial;padding:20px}h1{font-size:18px}.q{font-size:12px;font-weight:bold;margin-top:15px}.a{font-size:11px;margin-bottom:15px;color:#555}</style></head><body><h1>${title} ${chapter}</h1>${questions.map((q,i)=>`<div class="q">${q}</div><div class="a">${answers[i]||'—'}</div>`).join('')}</body></html>`;
-      const { uri } = await Print.printToHtmlAsync(html);
-      if (await Sharing.isAvailableAsync()) {
+      console.log("Generating PDF...");
+      const { uri } = await Print.printAsync({ html });
+      console.log("PDF generated at:", uri);
+      const isAvailable = await Sharing.isAvailableAsync();
+      console.log("Sharing available:", isAvailable);
+      if (isAvailable) {
         await Sharing.shareAsync(uri, { mimeType: "application/pdf", dialogTitle: "Minha Meditação" });
       }
-    } catch (e) { Alert.alert("Erro", "Falha ao gerar PDF"); }
+    } catch (e) { 
+      console.error("PDF Error:", e);
+      Alert.alert("Erro", "Falha ao gerar PDF: " + (e?.message || e)); 
+    }
   };
 
   if (loading) return <View style={styles.loading}><ActivityIndicator size="large" color="#FFFFFF" /></View>;
@@ -148,10 +155,10 @@ const styles = StyleSheet.create({
   checkContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 20, marginBottom: 20 },
   checkRow: { flexDirection: 'row', alignItems: 'center' },
   checkBox: { width: 24, height: 24, borderRadius: 4, borderWidth: 2, borderColor: '#FFFFFF', marginRight: 8, alignItems: 'center', justifyContent: 'center' },
-  checkBoxChecked: { backgroundColor: '#FFFFFF' },
-  checkMark: { color: '#273107', fontSize: 16, fontWeight: 'bold' },
+  checkBoxChecked: { backgroundColor: '#273107' },
+  checkMark: { color: '#FFFFFF', fontSize: 16, fontWeight: 'bold' },
   checkLabel: { color: '#FFFFFF', fontSize: 14 },
   actions: { flexDirection: 'row', justifyContent: 'center', gap: 16, marginBottom: 40 },
-  actionButton: { paddingHorizontal: 24, paddingVertical: 12, backgroundColor: '#FFFFFF', borderRadius: 8, minWidth: 120, alignItems: 'center' },
-  actionText: { color: '#273107', fontWeight: 'bold', fontSize: 14 },
+  actionButton: { paddingHorizontal: 24, paddingVertical: 12, backgroundColor: '#273107', borderRadius: 8, minWidth: 120, alignItems: 'center' },
+  actionText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 14 },
 });

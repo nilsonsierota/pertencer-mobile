@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
   },
   itemSelected: {
-    backgroundColor: '#000000',
+    backgroundColor: '#273107',
   },
   itemTitle: {
     fontSize: 18,
