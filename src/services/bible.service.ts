@@ -11,16 +11,11 @@ export const BIBLE_VERSIONS: BibleVersion[] = [
 ];
 
 const BOOK_NAME_MAP: Record<string, string> = {
-  genesis: "gn",
-  genese: "gn",
-  exodo: "ex",
-  exodus: "ex",
-  levitico: "lv",
-  leviticus: "lv",
-  numeros: "nm",
-  numbers: "nm",
-  deuteronomio: "dt",
-  deuteronomy: "dt",
+  genesis: "gn", genese: "gn",
+  exodo: "ex", exodus: "ex",
+  levitico: "lv", leviticus: "lv",
+  numeros: "nm", numbers: "nm",
+  deuteronomio: "dt", deuteronomy: "dt",
   josue: "js",
   juizes: "jd",
   rute: "rt",
@@ -30,21 +25,20 @@ const BOOK_NAME_MAP: Record<string, string> = {
   "2 reis": "2kgs",
   "1 cronicas": "1ch",
   "2 cronicas": "2ch",
-  esdras: "ed",
+  esdras: "ezr",
   neemias: "ne",
   ester: "et",
   jo: "job",
-  salmos: "sl",
-  proverbios: "pv",
+  salmos: "ps",
+  proverbios: "prv",
   eclesiastes: "ec",
-  cantares: "ct",
-  isaias: "is",
-  isaías: "is",
+  cantares: "so",
+  isaias: "is", isaías: "is",
   jeremias: "jr",
   lamentacoes: "lm",
   ezequiel: "ez",
   daniel: "dn",
-  oseias: "os",
+  oseias: "ho",
   joel: "jl",
   amos: "am",
   obadias: "ob",
@@ -53,37 +47,36 @@ const BOOK_NAME_MAP: Record<string, string> = {
   naum: "na",
   habacuque: "hc",
   habakkuk: "hc",
-  sofonias: "sf",
-  ageu: "ag",
+  sofonias: "zp",
+  ageu: "hg",
   zacarias: "zc",
   mateus: "mt",
-  marcos: "mc",
+  marcos: "mk",
   lucas: "lk",
   joao: "jo",
-  atos: "at",
-  romans: "rm",
-  romanos: "rm",
+  atos: "act",
+  romans: "rm", romanos: "rm",
   "1 corintios": "1co",
   "2 corintios": "2co",
   galatas: "gl",
-  efesios: "ef",
-  filipenses: "fp",
+  efesios: "eph",
+  filipenses: "ph",
   colossenses: "cl",
   "1 tessalonicenses": "1ts",
   "2 tessalonicenses": "2ts",
   "1 timoteo": "1tm",
   "2 timoteo": "2tm",
   tito: "tt",
-  filemon: "fm",
+  filemon: "phm",
   hebreus: "hb",
-  tiago: "tg",
+  tiago: "jm",
   "1 pedro": "1pe",
   "2 pedro": "2pe",
   "1 joao": "1jo",
   "2 joao": "2jo",
   "3 joao": "3jo",
-  judas: "jd",
-  apocalipse: "ap",
+  judas: "jud",
+  apocalipse: "re",
 };
 
 type BibleJson = {
@@ -93,209 +86,654 @@ type BibleJson = {
   verses: { verse: number; text: string }[];
 };
 
-const getBibleData = (version: string, bookCode: string, chapter: number): BibleJson | null => {
-  try {
-    switch (`${version}/${bookCode}/${chapter}`) {
-      case 'nvi/gn/1': return require('../../assets/bible/nvi/gn/1.json');
-      case 'nvi/gn/2': return require('../../assets/bible/nvi/gn/2.json');
-      case 'nvi/gn/3': return require('../../assets/bible/nvi/gn/3.json');
-      case 'nvi/gn/4': return require('../../assets/bible/nvi/gn/4.json');
-      case 'nvi/gn/5': return require('../../assets/bible/nvi/gn/5.json');
-      case 'nvi/gn/6': return require('../../assets/bible/nvi/gn/6.json');
-      case 'nvi/gn/7': return require('../../assets/bible/nvi/gn/7.json');
-      case 'nvi/gn/8': return require('../../assets/bible/nvi/gn/8.json');
-      case 'nvi/gn/9': return require('../../assets/bible/nvi/gn/9.json');
-      case 'nvi/gn/10': return require('../../assets/bible/nvi/gn/10.json');
-      case 'nvi/gn/11': return require('../../assets/bible/nvi/gn/11.json');
-      case 'nvi/gn/12': return require('../../assets/bible/nvi/gn/12.json');
-      case 'nvi/gn/13': return require('../../assets/bible/nvi/gn/13.json');
-      case 'nvi/gn/14': return require('../../assets/bible/nvi/gn/14.json');
-      case 'nvi/gn/15': return require('../../assets/bible/nvi/gn/15.json');
-      case 'nvi/gn/16': return require('../../assets/bible/nvi/gn/16.json');
-      case 'nvi/gn/17': return require('../../assets/bible/nvi/gn/17.json');
-      case 'nvi/gn/18': return require('../../assets/bible/nvi/gn/18.json');
-      case 'nvi/gn/19': return require('../../assets/bible/nvi/gn/19.json');
-      case 'nvi/gn/20': return require('../../assets/bible/nvi/gn/20.json');
-      case 'nvi/mt/1': return require('../../assets/bible/nvi/mt/1.json');
-      case 'nvi/mt/2': return require('../../assets/bible/nvi/mt/2.json');
-      case 'nvi/mt/3': return require('../../assets/bible/nvi/mt/3.json');
-      case 'nvi/mt/4': return require('../../assets/bible/nvi/mt/4.json');
-      case 'nvi/mt/5': return require('../../assets/bible/nvi/mt/5.json');
-      case 'nvi/mt/6': return require('../../assets/bible/nvi/mt/6.json');
-      case 'nvi/mt/7': return require('../../assets/bible/nvi/mt/7.json');
-      case 'nvi/mt/8': return require('../../assets/bible/nvi/mt/8.json');
-      case 'nvi/mt/9': return require('../../assets/bible/nvi/mt/9.json');
-      case 'nvi/mt/10': return require('../../assets/bible/nvi/mt/10.json');
-      case 'nvi/mt/11': return require('../../assets/bible/nvi/mt/11.json');
-      case 'nvi/mt/12': return require('../../assets/bible/nvi/mt/12.json');
-      case 'nvi/mt/13': return require('../../assets/bible/nvi/mt/13.json');
-      case 'nvi/mt/14': return require('../../assets/bible/nvi/mt/14.json');
-      case 'nvi/mt/15': return require('../../assets/bible/nvi/mt/15.json');
-      case 'nvi/mt/16': return require('../../assets/bible/nvi/mt/16.json');
-      case 'nvi/mt/17': return require('../../assets/bible/nvi/mt/17.json');
-      case 'nvi/mt/18': return require('../../assets/bible/nvi/mt/18.json');
-      case 'nvi/mt/19': return require('../../assets/bible/nvi/mt/19.json');
-      case 'nvi/mt/20': return require('../../assets/bible/nvi/mt/20.json');
-      case 'nvi/mt/21': return require('../../assets/bible/nvi/mt/21.json');
-      case 'nvi/mt/22': return require('../../assets/bible/nvi/mt/22.json');
-      case 'nvi/mt/23': return require('../../assets/bible/nvi/mt/23.json');
-      case 'nvi/mt/24': return require('../../assets/bible/nvi/mt/24.json');
-      case 'nvi/mt/25': return require('../../assets/bible/nvi/mt/25.json');
-      case 'nvi/mt/26': return require('../../assets/bible/nvi/mt/26.json');
-      case 'nvi/mt/27': return require('../../assets/bible/nvi/mt/27.json');
-      case 'nvi/mt/28': return require('../../assets/bible/nvi/mt/28.json');
-      case 'nvi/mc/1': return require('../../assets/bible/nvi/mc/1.json');
-      case 'nvi/mc/2': return require('../../assets/bible/nvi/mc/2.json');
-      case 'nvi/mc/3': return require('../../assets/bible/nvi/mc/3.json');
-      case 'nvi/mc/4': return require('../../assets/bible/nvi/mc/4.json');
-      case 'nvi/mc/5': return require('../../assets/bible/nvi/mc/5.json');
-      case 'nvi/mc/6': return require('../../assets/bible/nvi/mc/6.json');
-      case 'nvi/mc/7': return require('../../assets/bible/nvi/mc/7.json');
-      case 'nvi/mc/8': return require('../../assets/bible/nvi/mc/8.json');
-      case 'nvi/mc/9': return require('../../assets/bible/nvi/mc/9.json');
-      case 'nvi/mc/10': return require('../../assets/bible/nvi/mc/10.json');
-      case 'nvi/mc/11': return require('../../assets/bible/nvi/mc/11.json');
-      case 'nvi/mc/12': return require('../../assets/bible/nvi/mc/12.json');
-      case 'nvi/mc/13': return require('../../assets/bible/nvi/mc/13.json');
-      case 'nvi/mc/14': return require('../../assets/bible/nvi/mc/14.json');
-      case 'nvi/mc/15': return require('../../assets/bible/nvi/mc/15.json');
-      case 'nvi/mc/16': return require('../../assets/bible/nvi/mc/16.json');
-      case 'nvi/lk/1': return require('../../assets/bible/nvi/lk/1.json');
-      case 'nvi/lk/2': return require('../../assets/bible/nvi/lk/2.json');
-      case 'nvi/lk/3': return require('../../assets/bible/nvi/lk/3.json');
-      case 'nvi/lk/4': return require('../../assets/bible/nvi/lk/4.json');
-      case 'nvi/lk/5': return require('../../assets/bible/nvi/lk/5.json');
-      case 'nvi/lk/6': return require('../../assets/bible/nvi/lk/6.json');
-      case 'nvi/lk/7': return require('../../assets/bible/nvi/lk/7.json');
-      case 'nvi/lk/8': return require('../../assets/bible/nvi/lk/8.json');
-      case 'nvi/lk/9': return require('../../assets/bible/nvi/lk/9.json');
-      case 'nvi/lk/10': return require('../../assets/bible/nvi/lk/10.json');
-      case 'nvi/lk/11': return require('../../assets/bible/nvi/lk/11.json');
-      case 'nvi/lk/12': return require('../../assets/bible/nvi/lk/12.json');
-      case 'nvi/lk/13': return require('../../assets/bible/nvi/lk/13.json');
-      case 'nvi/lk/14': return require('../../assets/bible/nvi/lk/14.json');
-      case 'nvi/lk/15': return require('../../assets/bible/nvi/lk/15.json');
-      case 'nvi/lk/16': return require('../../assets/bible/nvi/lk/16.json');
-      case 'nvi/lk/17': return require('../../assets/bible/nvi/lk/17.json');
-      case 'nvi/lk/18': return require('../../assets/bible/nvi/lk/18.json');
-      case 'nvi/lk/19': return require('../../assets/bible/nvi/lk/19.json');
-      case 'nvi/lk/20': return require('../../assets/bible/nvi/lk/20.json');
-      case 'nvi/lk/21': return require('../../assets/bible/nvi/lk/21.json');
-      case 'nvi/lk/22': return require('../../assets/bible/nvi/lk/22.json');
-      case 'nvi/lk/23': return require('../../assets/bible/nvi/lk/23.json');
-      case 'nvi/lk/24': return require('../../assets/bible/nvi/lk/24.json');
-      case 'nvi/jo/1': return require('../../assets/bible/nvi/jo/1.json');
-      case 'nvi/jo/2': return require('../../assets/bible/nvi/jo/2.json');
-      case 'nvi/jo/3': return require('../../assets/bible/nvi/jo/3.json');
-      case 'nvi/jo/4': return require('../../assets/bible/nvi/jo/4.json');
-      case 'nvi/jo/5': return require('../../assets/bible/nvi/jo/5.json');
-      case 'nvi/jo/6': return require('../../assets/bible/nvi/jo/6.json');
-      case 'nvi/jo/7': return require('../../assets/bible/nvi/jo/7.json');
-      case 'nvi/jo/8': return require('../../assets/bible/nvi/jo/8.json');
-      case 'nvi/jo/9': return require('../../assets/bible/nvi/jo/9.json');
-      case 'nvi/jo/10': return require('../../assets/bible/nvi/jo/10.json');
-      case 'nvi/jo/11': return require('../../assets/bible/nvi/jo/11.json');
-      case 'nvi/jo/12': return require('../../assets/bible/nvi/jo/12.json');
-      case 'nvi/jo/13': return require('../../assets/bible/nvi/jo/13.json');
-      case 'nvi/jo/14': return require('../../assets/bible/nvi/jo/14.json');
-      case 'nvi/jo/15': return require('../../assets/bible/nvi/jo/15.json');
-      case 'nvi/jo/16': return require('../../assets/bible/nvi/jo/16.json');
-      case 'nvi/jo/17': return require('../../assets/bible/nvi/jo/17.json');
-      case 'nvi/jo/18': return require('../../assets/bible/nvi/jo/18.json');
-      case 'nvi/jo/19': return require('../../assets/bible/nvi/jo/19.json');
-      case 'nvi/jo/20': return require('../../assets/bible/nvi/jo/20.json');
-      case 'nvi/jo/21': return require('../../assets/bible/nvi/jo/21.json');
-      case 'arc/gn/1': return require('../../assets/bible/arc/gn/1.json');
-      case 'arc/gn/2': return require('../../assets/bible/arc/gn/2.json');
-      case 'arc/gn/3': return require('../../assets/bible/arc/gn/3.json');
-      case 'arc/gn/4': return require('../../assets/bible/arc/gn/4.json');
-      case 'arc/gn/5': return require('../../assets/bible/arc/gn/5.json');
-      case 'arc/gn/6': return require('../../assets/bible/arc/gn/6.json');
-      case 'arc/gn/7': return require('../../assets/bible/arc/gn/7.json');
-      case 'arc/gn/8': return require('../../assets/bible/arc/gn/8.json');
-      case 'arc/gn/9': return require('../../assets/bible/arc/gn/9.json');
-      case 'arc/gn/10': return require('../../assets/bible/arc/gn/10.json');
-      case 'arc/gn/11': return require('../../assets/bible/arc/gn/11.json');
-      case 'arc/gn/12': return require('../../assets/bible/arc/gn/12.json');
-      case 'arc/gn/13': return require('../../assets/bible/arc/gn/13.json');
-      case 'arc/gn/14': return require('../../assets/bible/arc/gn/14.json');
-      case 'arc/gn/15': return require('../../assets/bible/arc/gn/15.json');
-      case 'arc/gn/16': return require('../../assets/bible/arc/gn/16.json');
-      case 'arc/gn/17': return require('../../assets/bible/arc/gn/17.json');
-      case 'arc/gn/18': return require('../../assets/bible/arc/gn/18.json');
-      case 'arc/gn/19': return require('../../assets/bible/arc/gn/19.json');
-      case 'arc/gn/20': return require('../../assets/bible/arc/gn/20.json');
-      case 'arc/mt/1': return require('../../assets/bible/arc/mt/1.json');
-      case 'arc/mt/2': return require('../../assets/bible/arc/mt/2.json');
-      case 'arc/mt/3': return require('../../assets/bible/arc/mt/3.json');
-      case 'arc/mt/4': return require('../../assets/bible/arc/mt/4.json');
-      case 'arc/mt/5': return require('../../assets/bible/arc/mt/5.json');
-      case 'arc/mt/6': return require('../../assets/bible/arc/mt/6.json');
-      case 'arc/mt/7': return require('../../assets/bible/arc/mt/7.json');
-      case 'arc/mt/8': return require('../../assets/bible/arc/mt/8.json');
-      case 'arc/mt/9': return require('../../assets/bible/arc/mt/9.json');
-      case 'arc/mt/10': return require('../../assets/bible/arc/mt/10.json');
-      case 'arc/mt/11': return require('../../assets/bible/arc/mt/11.json');
-      case 'arc/mt/12': return require('../../assets/bible/arc/mt/12.json');
-      case 'arc/mt/13': return require('../../assets/bible/arc/mt/13.json');
-      case 'arc/mt/14': return require('../../assets/bible/arc/mt/14.json');
-      case 'arc/mt/15': return require('../../assets/bible/arc/mt/15.json');
-      case 'arc/mt/16': return require('../../assets/bible/arc/mt/16.json');
-      case 'arc/mt/17': return require('../../assets/bible/arc/mt/17.json');
-      case 'arc/mt/18': return require('../../assets/bible/arc/mt/18.json');
-      case 'arc/mt/19': return require('../../assets/bible/arc/mt/19.json');
-      case 'arc/mt/20': return require('../../assets/bible/arc/mt/20.json');
-      case 'arc/mt/21': return require('../../assets/bible/arc/mt/21.json');
-      case 'arc/mt/22': return require('../../assets/bible/arc/mt/22.json');
-      case 'arc/mt/23': return require('../../assets/bible/arc/mt/23.json');
-      case 'arc/mt/24': return require('../../assets/bible/arc/mt/24.json');
-      case 'arc/mt/25': return require('../../assets/bible/arc/mt/25.json');
-      case 'arc/mt/26': return require('../../assets/bible/arc/mt/26.json');
-      case 'arc/mt/27': return require('../../assets/bible/arc/mt/27.json');
-      case 'arc/mt/28': return require('../../assets/bible/arc/mt/28.json');
-      case 'arc/lk/1': return require('../../assets/bible/arc/lk/1.json');
-      case 'arc/lk/2': return require('../../assets/bible/arc/lk/2.json');
-      case 'arc/lk/3': return require('../../assets/bible/arc/lk/3.json');
-      case 'arc/lk/4': return require('../../assets/bible/arc/lk/4.json');
-      case 'arc/lk/5': return require('../../assets/bible/arc/lk/5.json');
-      case 'arc/lk/6': return require('../../assets/bible/arc/lk/6.json');
-      case 'arc/lk/7': return require('../../assets/bible/arc/lk/7.json');
-      case 'arc/lk/8': return require('../../assets/bible/arc/lk/8.json');
-      case 'arc/lk/9': return require('../../assets/bible/arc/lk/9.json');
-      case 'arc/lk/10': return require('../../assets/bible/arc/lk/10.json');
-      case 'arc/lk/11': return require('../../assets/bible/arc/lk/11.json');
-      case 'arc/lk/12': return require('../../assets/bible/arc/lk/12.json');
-      case 'arc/lk/13': return require('../../assets/bible/arc/lk/13.json');
-      case 'arc/lk/14': return require('../../assets/bible/arc/lk/14.json');
-      case 'arc/lk/15': return require('../../assets/bible/arc/lk/15.json');
-      case 'arc/lk/16': return require('../../assets/bible/arc/lk/16.json');
-      case 'arc/lk/17': return require('../../assets/bible/arc/lk/17.json');
-      case 'arc/lk/18': return require('../../assets/bible/arc/lk/18.json');
-      case 'arc/lk/19': return require('../../assets/bible/arc/lk/19.json');
-      case 'arc/lk/20': return require('../../assets/bible/arc/lk/20.json');
-      case 'arc/lk/21': return require('../../assets/bible/arc/lk/21.json');
-      case 'arc/lk/22': return require('../../assets/bible/arc/lk/22.json');
-      case 'arc/lk/23': return require('../../assets/bible/arc/lk/23.json');
-      case 'arc/lk/24': return require('../../assets/bible/arc/lk/24.json');
-      default: return null;
+const loadChapter = (version: string, book: string, chapter: number): BibleJson | null => {
+  const key = `${version}/${book}/${chapter}`;
+  const loaders: Record<string, () => BibleJson> = {
+    "nvi/gn/1": () => require('../../assets/bible/nvi/gn/1.json'),
+    "nvi/gn/2": () => require('../../assets/bible/nvi/gn/2.json'),
+    "nvi/gn/3": () => require('../../assets/bible/nvi/gn/3.json'),
+    "nvi/gn/4": () => require('../../assets/bible/nvi/gn/4.json'),
+    "nvi/gn/5": () => require('../../assets/bible/nvi/gn/5.json'),
+    "nvi/gn/6": () => require('../../assets/bible/nvi/gn/6.json'),
+    "nvi/gn/7": () => require('../../assets/bible/nvi/gn/7.json'),
+    "nvi/gn/8": () => require('../../assets/bible/nvi/gn/8.json'),
+    "nvi/gn/9": () => require('../../assets/bible/nvi/gn/9.json'),
+    "nvi/gn/10": () => require('../../assets/bible/nvi/gn/10.json'),
+    "nvi/gn/11": () => require('../../assets/bible/nvi/gn/11.json'),
+    "nvi/gn/12": () => require('../../assets/bible/nvi/gn/12.json'),
+    "nvi/gn/13": () => require('../../assets/bible/nvi/gn/13.json'),
+    "nvi/gn/14": () => require('../../assets/bible/nvi/gn/14.json'),
+    "nvi/gn/15": () => require('../../assets/bible/nvi/gn/15.json'),
+    "nvi/gn/16": () => require('../../assets/bible/nvi/gn/16.json'),
+    "nvi/gn/17": () => require('../../assets/bible/nvi/gn/17.json'),
+    "nvi/gn/18": () => require('../../assets/bible/nvi/gn/18.json'),
+    "nvi/gn/19": () => require('../../assets/bible/nvi/gn/19.json'),
+    "nvi/gn/20": () => require('../../assets/bible/nvi/gn/20.json'),
+    "nvi/gn/21": () => require('../../assets/bible/nvi/gn/21.json'),
+    "nvi/gn/22": () => require('../../assets/bible/nvi/gn/22.json'),
+    "nvi/gn/23": () => require('../../assets/bible/nvi/gn/23.json'),
+    "nvi/gn/24": () => require('../../assets/bible/nvi/gn/24.json'),
+    "nvi/gn/25": () => require('../../assets/bible/nvi/gn/25.json'),
+    "nvi/gn/26": () => require('../../assets/bible/nvi/gn/26.json'),
+    "nvi/gn/27": () => require('../../assets/bible/nvi/gn/27.json'),
+    "nvi/gn/28": () => require('../../assets/bible/nvi/gn/28.json'),
+    "nvi/gn/29": () => require('../../assets/bible/nvi/gn/29.json'),
+    "nvi/gn/30": () => require('../../assets/bible/nvi/gn/30.json'),
+    "nvi/gn/31": () => require('../../assets/bible/nvi/gn/31.json'),
+    "nvi/gn/32": () => require('../../assets/bible/nvi/gn/32.json'),
+    "nvi/gn/33": () => require('../../assets/bible/nvi/gn/33.json'),
+    "nvi/gn/34": () => require('../../assets/bible/nvi/gn/34.json'),
+    "nvi/gn/35": () => require('../../assets/bible/nvi/gn/35.json'),
+    "nvi/gn/36": () => require('../../assets/bible/nvi/gn/36.json'),
+    "nvi/gn/37": () => require('../../assets/bible/nvi/gn/37.json'),
+    "nvi/gn/38": () => require('../../assets/bible/nvi/gn/38.json'),
+    "nvi/gn/39": () => require('../../assets/bible/nvi/gn/39.json'),
+    "nvi/gn/40": () => require('../../assets/bible/nvi/gn/40.json'),
+    "nvi/gn/41": () => require('../../assets/bible/nvi/gn/41.json'),
+    "nvi/gn/42": () => require('../../assets/bible/nvi/gn/42.json'),
+    "nvi/gn/43": () => require('../../assets/bible/nvi/gn/43.json'),
+    "nvi/gn/44": () => require('../../assets/bible/nvi/gn/44.json'),
+    "nvi/gn/45": () => require('../../assets/bible/nvi/gn/45.json'),
+    "nvi/gn/46": () => require('../../assets/bible/nvi/gn/46.json'),
+    "nvi/gn/47": () => require('../../assets/bible/nvi/gn/47.json'),
+    "nvi/gn/48": () => require('../../assets/bible/nvi/gn/48.json'),
+    "nvi/gn/49": () => require('../../assets/bible/nvi/gn/49.json'),
+    "nvi/gn/50": () => require('../../assets/bible/nvi/gn/50.json'),
+    "nvi/mt/1": () => require('../../assets/bible/nvi/mt/1.json'),
+    "nvi/mt/2": () => require('../../assets/bible/nvi/mt/2.json'),
+    "nvi/mt/3": () => require('../../assets/bible/nvi/mt/3.json'),
+    "nvi/mt/4": () => require('../../assets/bible/nvi/mt/4.json'),
+    "nvi/mt/5": () => require('../../assets/bible/nvi/mt/5.json'),
+    "nvi/mt/6": () => require('../../assets/bible/nvi/mt/6.json'),
+    "nvi/mt/7": () => require('../../assets/bible/nvi/mt/7.json'),
+    "nvi/mt/8": () => require('../../assets/bible/nvi/mt/8.json'),
+    "nvi/mt/9": () => require('../../assets/bible/nvi/mt/9.json'),
+    "nvi/mt/10": () => require('../../assets/bible/nvi/mt/10.json'),
+    "nvi/mt/11": () => require('../../assets/bible/nvi/mt/11.json'),
+    "nvi/mt/12": () => require('../../assets/bible/nvi/mt/12.json'),
+    "nvi/mt/13": () => require('../../assets/bible/nvi/mt/13.json'),
+    "nvi/mt/14": () => require('../../assets/bible/nvi/mt/14.json'),
+    "nvi/mt/15": () => require('../../assets/bible/nvi/mt/15.json'),
+    "nvi/mt/16": () => require('../../assets/bible/nvi/mt/16.json'),
+    "nvi/mt/17": () => require('../../assets/bible/nvi/mt/17.json'),
+    "nvi/mt/18": () => require('../../assets/bible/nvi/mt/18.json'),
+    "nvi/mt/19": () => require('../../assets/bible/nvi/mt/19.json'),
+    "nvi/mt/20": () => require('../../assets/bible/nvi/mt/20.json'),
+    "nvi/mt/21": () => require('../../assets/bible/nvi/mt/21.json'),
+    "nvi/mt/22": () => require('../../assets/bible/nvi/mt/22.json'),
+    "nvi/mt/23": () => require('../../assets/bible/nvi/mt/23.json'),
+    "nvi/mt/24": () => require('../../assets/bible/nvi/mt/24.json'),
+    "nvi/mt/25": () => require('../../assets/bible/nvi/mt/25.json'),
+    "nvi/mt/26": () => require('../../assets/bible/nvi/mt/26.json'),
+    "nvi/mt/27": () => require('../../assets/bible/nvi/mt/27.json'),
+    "nvi/mt/28": () => require('../../assets/bible/nvi/mt/28.json'),
+    "nvi/mk/1": () => require('../../assets/bible/nvi/mk/1.json'),
+    "nvi/mk/2": () => require('../../assets/bible/nvi/mk/2.json'),
+    "nvi/mk/3": () => require('../../assets/bible/nvi/mk/3.json'),
+    "nvi/mk/4": () => require('../../assets/bible/nvi/mk/4.json'),
+    "nvi/mk/5": () => require('../../assets/bible/nvi/mk/5.json'),
+    "nvi/mk/6": () => require('../../assets/bible/nvi/mk/6.json'),
+    "nvi/mk/7": () => require('../../assets/bible/nvi/mk/7.json'),
+    "nvi/mk/8": () => require('../../assets/bible/nvi/mk/8.json'),
+    "nvi/mk/9": () => require('../../assets/bible/nvi/mk/9.json'),
+    "nvi/mk/10": () => require('../../assets/bible/nvi/mk/10.json'),
+    "nvi/mk/11": () => require('../../assets/bible/nvi/mk/11.json'),
+    "nvi/mk/12": () => require('../../assets/bible/nvi/mk/12.json'),
+    "nvi/mk/13": () => require('../../assets/bible/nvi/mk/13.json'),
+    "nvi/mk/14": () => require('../../assets/bible/nvi/mk/14.json'),
+    "nvi/mk/15": () => require('../../assets/bible/nvi/mk/15.json'),
+    "nvi/mk/16": () => require('../../assets/bible/nvi/mk/16.json'),
+    "nvi/lk/1": () => require('../../assets/bible/nvi/lk/1.json'),
+    "nvi/lk/2": () => require('../../assets/bible/nvi/lk/2.json'),
+    "nvi/lk/3": () => require('../../assets/bible/nvi/lk/3.json'),
+    "nvi/lk/4": () => require('../../assets/bible/nvi/lk/4.json'),
+    "nvi/lk/5": () => require('../../assets/bible/nvi/lk/5.json'),
+    "nvi/lk/6": () => require('../../assets/bible/nvi/lk/6.json'),
+    "nvi/lk/7": () => require('../../assets/bible/nvi/lk/7.json'),
+    "nvi/lk/8": () => require('../../assets/bible/nvi/lk/8.json'),
+    "nvi/lk/9": () => require('../../assets/bible/nvi/lk/9.json'),
+    "nvi/lk/10": () => require('../../assets/bible/nvi/lk/10.json'),
+    "nvi/lk/11": () => require('../../assets/bible/nvi/lk/11.json'),
+    "nvi/lk/12": () => require('../../assets/bible/nvi/lk/12.json'),
+    "nvi/lk/13": () => require('../../assets/bible/nvi/lk/13.json'),
+    "nvi/lk/14": () => require('../../assets/bible/nvi/lk/14.json'),
+    "nvi/lk/15": () => require('../../assets/bible/nvi/lk/15.json'),
+    "nvi/lk/16": () => require('../../assets/bible/nvi/lk/16.json'),
+    "nvi/lk/17": () => require('../../assets/bible/nvi/lk/17.json'),
+    "nvi/lk/18": () => require('../../assets/bible/nvi/lk/18.json'),
+    "nvi/lk/19": () => require('../../assets/bible/nvi/lk/19.json'),
+    "nvi/lk/20": () => require('../../assets/bible/nvi/lk/20.json'),
+    "nvi/lk/21": () => require('../../assets/bible/nvi/lk/21.json'),
+    "nvi/lk/22": () => require('../../assets/bible/nvi/lk/22.json'),
+    "nvi/lk/23": () => require('../../assets/bible/nvi/lk/23.json'),
+    "nvi/lk/24": () => require('../../assets/bible/nvi/lk/24.json'),
+    "nvi/jo/1": () => require('../../assets/bible/nvi/jo/1.json'),
+    "nvi/jo/2": () => require('../../assets/bible/nvi/jo/2.json'),
+    "nvi/jo/3": () => require('../../assets/bible/nvi/jo/3.json'),
+    "nvi/jo/4": () => require('../../assets/bible/nvi/jo/4.json'),
+    "nvi/jo/5": () => require('../../assets/bible/nvi/jo/5.json'),
+    "nvi/jo/6": () => require('../../assets/bible/nvi/jo/6.json'),
+    "nvi/jo/7": () => require('../../assets/bible/nvi/jo/7.json'),
+    "nvi/jo/8": () => require('../../assets/bible/nvi/jo/8.json'),
+    "nvi/jo/9": () => require('../../assets/bible/nvi/jo/9.json'),
+    "nvi/jo/10": () => require('../../assets/bible/nvi/jo/10.json'),
+    "nvi/jo/11": () => require('../../assets/bible/nvi/jo/11.json'),
+    "nvi/jo/12": () => require('../../assets/bible/nvi/jo/12.json'),
+    "nvi/jo/13": () => require('../../assets/bible/nvi/jo/13.json'),
+    "nvi/jo/14": () => require('../../assets/bible/nvi/jo/14.json'),
+    "nvi/jo/15": () => require('../../assets/bible/nvi/jo/15.json'),
+    "nvi/jo/16": () => require('../../assets/bible/nvi/jo/16.json'),
+    "nvi/jo/17": () => require('../../assets/bible/nvi/jo/17.json'),
+    "nvi/jo/18": () => require('../../assets/bible/nvi/jo/18.json'),
+    "nvi/jo/19": () => require('../../assets/bible/nvi/jo/19.json'),
+    "nvi/jo/20": () => require('../../assets/bible/nvi/jo/20.json'),
+    "nvi/jo/21": () => require('../../assets/bible/nvi/jo/21.json'),
+    "nvi/rm/1": () => require('../../assets/bible/nvi/rm/1.json'),
+    "nvi/rm/2": () => require('../../assets/bible/nvi/rm/2.json'),
+    "nvi/rm/3": () => require('../../assets/bible/nvi/rm/3.json'),
+    "nvi/rm/4": () => require('../../assets/bible/nvi/rm/4.json'),
+    "nvi/rm/5": () => require('../../assets/bible/nvi/rm/5.json'),
+    "nvi/rm/6": () => require('../../assets/bible/nvi/rm/6.json'),
+    "nvi/rm/7": () => require('../../assets/bible/nvi/rm/7.json'),
+    "nvi/rm/8": () => require('../../assets/bible/nvi/rm/8.json'),
+    "nvi/rm/9": () => require('../../assets/bible/nvi/rm/9.json'),
+    "nvi/rm/10": () => require('../../assets/bible/nvi/rm/10.json'),
+    "nvi/rm/11": () => require('../../assets/bible/nvi/rm/11.json'),
+    "nvi/rm/12": () => require('../../assets/bible/nvi/rm/12.json'),
+    "nvi/rm/13": () => require('../../assets/bible/nvi/rm/13.json'),
+    "nvi/rm/14": () => require('../../assets/bible/nvi/rm/14.json'),
+    "nvi/rm/15": () => require('../../assets/bible/nvi/rm/15.json'),
+    "nvi/rm/16": () => require('../../assets/bible/nvi/rm/16.json'),
+    "arc/gn/1": () => require('../../assets/bible/arc/gn/1.json'),
+    "arc/gn/2": () => require('../../assets/bible/arc/gn/2.json'),
+    "arc/gn/3": () => require('../../assets/bible/arc/gn/3.json'),
+    "arc/gn/4": () => require('../../assets/bible/arc/gn/4.json'),
+    "arc/gn/5": () => require('../../assets/bible/arc/gn/5.json'),
+    "arc/gn/6": () => require('../../assets/bible/arc/gn/6.json'),
+    "arc/gn/7": () => require('../../assets/bible/arc/gn/7.json'),
+    "arc/gn/8": () => require('../../assets/bible/arc/gn/8.json'),
+    "arc/gn/9": () => require('../../assets/bible/arc/gn/9.json'),
+    "arc/gn/10": () => require('../../assets/bible/arc/gn/10.json'),
+    "arc/gn/11": () => require('../../assets/bible/arc/gn/11.json'),
+    "arc/gn/12": () => require('../../assets/bible/arc/gn/12.json'),
+    "arc/gn/13": () => require('../../assets/bible/arc/gn/13.json'),
+    "arc/gn/14": () => require('../../assets/bible/arc/gn/14.json'),
+    "arc/gn/15": () => require('../../assets/bible/arc/gn/15.json'),
+    "arc/gn/16": () => require('../../assets/bible/arc/gn/16.json'),
+    "arc/gn/17": () => require('../../assets/bible/arc/gn/17.json'),
+    "arc/gn/18": () => require('../../assets/bible/arc/gn/18.json'),
+    "arc/gn/19": () => require('../../assets/bible/arc/gn/19.json'),
+    "arc/gn/20": () => require('../../assets/bible/arc/gn/20.json'),
+    "arc/gn/21": () => require('../../assets/bible/arc/gn/21.json'),
+    "arc/gn/22": () => require('../../assets/bible/arc/gn/22.json'),
+    "arc/gn/23": () => require('../../assets/bible/arc/gn/23.json'),
+    "arc/gn/24": () => require('../../assets/bible/arc/gn/24.json'),
+    "arc/gn/25": () => require('../../assets/bible/arc/gn/25.json'),
+    "arc/gn/26": () => require('../../assets/bible/arc/gn/26.json'),
+    "arc/gn/27": () => require('../../assets/bible/arc/gn/27.json'),
+    "arc/gn/28": () => require('../../assets/bible/arc/gn/28.json'),
+    "arc/gn/29": () => require('../../assets/bible/arc/gn/29.json'),
+    "arc/gn/30": () => require('../../assets/bible/arc/gn/30.json'),
+    "arc/gn/31": () => require('../../assets/bible/arc/gn/31.json'),
+    "arc/gn/32": () => require('../../assets/bible/arc/gn/32.json'),
+    "arc/gn/33": () => require('../../assets/bible/arc/gn/33.json'),
+    "arc/gn/34": () => require('../../assets/bible/arc/gn/34.json'),
+    "arc/gn/35": () => require('../../assets/bible/arc/gn/35.json'),
+    "arc/gn/36": () => require('../../assets/bible/arc/gn/36.json'),
+    "arc/gn/37": () => require('../../assets/bible/arc/gn/37.json'),
+    "arc/gn/38": () => require('../../assets/bible/arc/gn/38.json'),
+    "arc/gn/39": () => require('../../assets/bible/arc/gn/39.json'),
+    "arc/gn/40": () => require('../../assets/bible/arc/gn/40.json'),
+    "arc/gn/41": () => require('../../assets/bible/arc/gn/41.json'),
+    "arc/gn/42": () => require('../../assets/bible/arc/gn/42.json'),
+    "arc/gn/43": () => require('../../assets/bible/arc/gn/43.json'),
+    "arc/gn/44": () => require('../../assets/bible/arc/gn/44.json'),
+    "arc/gn/45": () => require('../../assets/bible/arc/gn/45.json'),
+    "arc/gn/46": () => require('../../assets/bible/arc/gn/46.json'),
+    "arc/gn/47": () => require('../../assets/bible/arc/gn/47.json'),
+    "arc/gn/48": () => require('../../assets/bible/arc/gn/48.json'),
+    "arc/gn/49": () => require('../../assets/bible/arc/gn/49.json'),
+    "arc/gn/50": () => require('../../assets/bible/arc/gn/50.json'),
+    "arc/mt/1": () => require('../../assets/bible/arc/mt/1.json'),
+    "arc/mt/2": () => require('../../assets/bible/arc/mt/2.json'),
+    "arc/mt/3": () => require('../../assets/bible/arc/mt/3.json'),
+    "arc/mt/4": () => require('../../assets/bible/arc/mt/4.json'),
+    "arc/mt/5": () => require('../../assets/bible/arc/mt/5.json'),
+    "arc/mt/6": () => require('../../assets/bible/arc/mt/6.json'),
+    "arc/mt/7": () => require('../../assets/bible/arc/mt/7.json'),
+    "arc/mt/8": () => require('../../assets/bible/arc/mt/8.json'),
+    "arc/mt/9": () => require('../../assets/bible/arc/mt/9.json'),
+    "arc/mt/10": () => require('../../assets/bible/arc/mt/10.json'),
+    "arc/mt/11": () => require('../../assets/bible/arc/mt/11.json'),
+    "arc/mt/12": () => require('../../assets/bible/arc/mt/12.json'),
+    "arc/mt/13": () => require('../../assets/bible/arc/mt/13.json'),
+    "arc/mt/14": () => require('../../assets/bible/arc/mt/14.json'),
+    "arc/mt/15": () => require('../../assets/bible/arc/mt/15.json'),
+    "arc/mt/16": () => require('../../assets/bible/arc/mt/16.json'),
+    "arc/mt/17": () => require('../../assets/bible/arc/mt/17.json'),
+    "arc/mt/18": () => require('../../assets/bible/arc/mt/18.json'),
+    "arc/mt/19": () => require('../../assets/bible/arc/mt/19.json'),
+    "arc/mt/20": () => require('../../assets/bible/arc/mt/20.json'),
+    "arc/mt/21": () => require('../../assets/bible/arc/mt/21.json'),
+    "arc/mt/22": () => require('../../assets/bible/arc/mt/22.json'),
+    "arc/mt/23": () => require('../../assets/bible/arc/mt/23.json'),
+    "arc/mt/24": () => require('../../assets/bible/arc/mt/24.json'),
+    "arc/mt/25": () => require('../../assets/bible/arc/mt/25.json'),
+    "arc/mt/26": () => require('../../assets/bible/arc/mt/26.json'),
+    "arc/mt/27": () => require('../../assets/bible/arc/mt/27.json'),
+    "arc/mt/28": () => require('../../assets/bible/arc/mt/28.json'),
+    "arc/mk/1": () => require('../../assets/bible/arc/mk/1.json'),
+    "arc/mk/2": () => require('../../assets/bible/arc/mk/2.json'),
+    "arc/mk/3": () => require('../../assets/bible/arc/mk/3.json'),
+    "arc/mk/4": () => require('../../assets/bible/arc/mk/4.json'),
+    "arc/mk/5": () => require('../../assets/bible/arc/mk/5.json'),
+    "arc/mk/6": () => require('../../assets/bible/arc/mk/6.json'),
+    "arc/mk/7": () => require('../../assets/bible/arc/mk/7.json'),
+    "arc/mk/8": () => require('../../assets/bible/arc/mk/8.json'),
+    "arc/mk/9": () => require('../../assets/bible/arc/mk/9.json'),
+    "arc/mk/10": () => require('../../assets/bible/arc/mk/10.json'),
+    "arc/mk/11": () => require('../../assets/bible/arc/mk/11.json'),
+    "arc/mk/12": () => require('../../assets/bible/arc/mk/12.json'),
+    "arc/mk/13": () => require('../../assets/bible/arc/mk/13.json'),
+    "arc/mk/14": () => require('../../assets/bible/arc/mk/14.json'),
+    "arc/mk/15": () => require('../../assets/bible/arc/mk/15.json'),
+    "arc/mk/16": () => require('../../assets/bible/arc/mk/16.json'),
+    "arc/lk/1": () => require('../../assets/bible/arc/lk/1.json'),
+    "arc/lk/2": () => require('../../assets/bible/arc/lk/2.json'),
+    "arc/lk/3": () => require('../../assets/bible/arc/lk/3.json'),
+    "arc/lk/4": () => require('../../assets/bible/arc/lk/4.json'),
+    "arc/lk/5": () => require('../../assets/bible/arc/lk/5.json'),
+    "arc/lk/6": () => require('../../assets/bible/arc/lk/6.json'),
+    "arc/lk/7": () => require('../../assets/bible/arc/lk/7.json'),
+    "arc/lk/8": () => require('../../assets/bible/arc/lk/8.json'),
+    "arc/lk/9": () => require('../../assets/bible/arc/lk/9.json'),
+    "arc/lk/10": () => require('../../assets/bible/arc/lk/10.json'),
+    "arc/lk/11": () => require('../../assets/bible/arc/lk/11.json'),
+    "arc/lk/12": () => require('../../assets/bible/arc/lk/12.json'),
+    "arc/lk/13": () => require('../../assets/bible/arc/lk/13.json'),
+    "arc/lk/14": () => require('../../assets/bible/arc/lk/14.json'),
+    "arc/lk/15": () => require('../../assets/bible/arc/lk/15.json'),
+    "arc/lk/16": () => require('../../assets/bible/arc/lk/16.json'),
+    "arc/lk/17": () => require('../../assets/bible/arc/lk/17.json'),
+    "arc/lk/18": () => require('../../assets/bible/arc/lk/18.json'),
+    "arc/lk/19": () => require('../../assets/bible/arc/lk/19.json'),
+    "arc/lk/20": () => require('../../assets/bible/arc/lk/20.json'),
+    "arc/lk/21": () => require('../../assets/bible/arc/lk/21.json'),
+    "arc/lk/22": () => require('../../assets/bible/arc/lk/22.json'),
+    "arc/lk/23": () => require('../../assets/bible/arc/lk/23.json'),
+    "arc/lk/24": () => require('../../assets/bible/arc/lk/24.json'),
+    "arc/jo/1": () => require('../../assets/bible/arc/jo/1.json'),
+    "arc/jo/2": () => require('../../assets/bible/arc/jo/2.json'),
+    "arc/jo/3": () => require('../../assets/bible/arc/jo/3.json'),
+    "arc/jo/4": () => require('../../assets/bible/arc/jo/4.json'),
+    "arc/jo/5": () => require('../../assets/bible/arc/jo/5.json'),
+    "arc/jo/6": () => require('../../assets/bible/arc/jo/6.json'),
+    "arc/jo/7": () => require('../../assets/bible/arc/jo/7.json'),
+    "arc/jo/8": () => require('../../assets/bible/arc/jo/8.json'),
+    "arc/jo/9": () => require('../../assets/bible/arc/jo/9.json'),
+    "arc/jo/10": () => require('../../assets/bible/arc/jo/10.json'),
+    "arc/jo/11": () => require('../../assets/bible/arc/jo/11.json'),
+    "arc/jo/12": () => require('../../assets/bible/arc/jo/12.json'),
+    "arc/jo/13": () => require('../../assets/bible/arc/jo/13.json'),
+    "arc/jo/14": () => require('../../assets/bible/arc/jo/14.json'),
+    "arc/jo/15": () => require('../../assets/bible/arc/jo/15.json'),
+    "arc/jo/16": () => require('../../assets/bible/arc/jo/16.json'),
+    "arc/jo/17": () => require('../../assets/bible/arc/jo/17.json'),
+    "arc/jo/18": () => require('../../assets/bible/arc/jo/18.json'),
+    "arc/jo/19": () => require('../../assets/bible/arc/jo/19.json'),
+    "arc/jo/20": () => require('../../assets/bible/arc/jo/20.json'),
+    "arc/jo/21": () => require('../../assets/bible/arc/jo/21.json'),
+    "arc/rm/1": () => require('../../assets/bible/arc/rm/1.json'),
+    "arc/rm/2": () => require('../../assets/bible/arc/rm/2.json'),
+    "arc/rm/3": () => require('../../assets/bible/arc/rm/3.json'),
+    "arc/rm/4": () => require('../../assets/bible/arc/rm/4.json'),
+    "arc/rm/5": () => require('../../assets/bible/arc/rm/5.json'),
+    "arc/rm/6": () => require('../../assets/bible/arc/rm/6.json'),
+    "arc/rm/7": () => require('../../assets/bible/arc/rm/7.json'),
+    "arc/rm/8": () => require('../../assets/bible/arc/rm/8.json'),
+    "arc/rm/9": () => require('../../assets/bible/arc/rm/9.json'),
+    "arc/rm/10": () => require('../../assets/bible/arc/rm/10.json'),
+    "arc/rm/11": () => require('../../assets/bible/arc/rm/11.json'),
+    "arc/rm/12": () => require('../../assets/bible/arc/rm/12.json'),
+    "arc/rm/13": () => require('../../assets/bible/arc/rm/13.json'),
+    "arc/rm/14": () => require('../../assets/bible/arc/rm/14.json'),
+    "arc/rm/15": () => require('../../assets/bible/arc/rm/15.json'),
+    "arc/rm/16": () => require('../../assets/bible/arc/rm/16.json'),
+    "acf/gn/1": () => require('../../assets/bible/acf/gn/1.json'),
+    "acf/gn/2": () => require('../../assets/bible/acf/gn/2.json'),
+    "acf/gn/3": () => require('../../assets/bible/acf/gn/3.json'),
+    "acf/gn/4": () => require('../../assets/bible/acf/gn/4.json'),
+    "acf/gn/5": () => require('../../assets/bible/acf/gn/5.json'),
+    "acf/gn/6": () => require('../../assets/bible/acf/gn/6.json'),
+    "acf/gn/7": () => require('../../assets/bible/acf/gn/7.json'),
+    "acf/gn/8": () => require('../../assets/bible/acf/gn/8.json'),
+    "acf/gn/9": () => require('../../assets/bible/acf/gn/9.json'),
+    "acf/gn/10": () => require('../../assets/bible/acf/gn/10.json'),
+    "acf/gn/11": () => require('../../assets/bible/acf/gn/11.json'),
+    "acf/gn/12": () => require('../../assets/bible/acf/gn/12.json'),
+    "acf/gn/13": () => require('../../assets/bible/acf/gn/13.json'),
+    "acf/gn/14": () => require('../../assets/bible/acf/gn/14.json'),
+    "acf/gn/15": () => require('../../assets/bible/acf/gn/15.json'),
+    "acf/gn/16": () => require('../../assets/bible/acf/gn/16.json'),
+    "acf/gn/17": () => require('../../assets/bible/acf/gn/17.json'),
+    "acf/gn/18": () => require('../../assets/bible/acf/gn/18.json'),
+    "acf/gn/19": () => require('../../assets/bible/acf/gn/19.json'),
+    "acf/gn/20": () => require('../../assets/bible/acf/gn/20.json'),
+    "acf/gn/21": () => require('../../assets/bible/acf/gn/21.json'),
+    "acf/gn/22": () => require('../../assets/bible/acf/gn/22.json'),
+    "acf/gn/23": () => require('../../assets/bible/acf/gn/23.json'),
+    "acf/gn/24": () => require('../../assets/bible/acf/gn/24.json'),
+    "acf/gn/25": () => require('../../assets/bible/acf/gn/25.json'),
+    "acf/gn/26": () => require('../../assets/bible/acf/gn/26.json'),
+    "acf/gn/27": () => require('../../assets/bible/acf/gn/27.json'),
+    "acf/gn/28": () => require('../../assets/bible/acf/gn/28.json'),
+    "acf/gn/29": () => require('../../assets/bible/acf/gn/29.json'),
+    "acf/gn/30": () => require('../../assets/bible/acf/gn/30.json'),
+    "acf/gn/31": () => require('../../assets/bible/acf/gn/31.json'),
+    "acf/gn/32": () => require('../../assets/bible/acf/gn/32.json'),
+    "acf/gn/33": () => require('../../assets/bible/acf/gn/33.json'),
+    "acf/gn/34": () => require('../../assets/bible/acf/gn/34.json'),
+    "acf/gn/35": () => require('../../assets/bible/acf/gn/35.json'),
+    "acf/gn/36": () => require('../../assets/bible/acf/gn/36.json'),
+    "acf/gn/37": () => require('../../assets/bible/acf/gn/37.json'),
+    "acf/gn/38": () => require('../../assets/bible/acf/gn/38.json'),
+    "acf/gn/39": () => require('../../assets/bible/acf/gn/39.json'),
+    "acf/gn/40": () => require('../../assets/bible/acf/gn/40.json'),
+    "acf/gn/41": () => require('../../assets/bible/acf/gn/41.json'),
+    "acf/gn/42": () => require('../../assets/bible/acf/gn/42.json'),
+    "acf/gn/43": () => require('../../assets/bible/acf/gn/43.json'),
+    "acf/gn/44": () => require('../../assets/bible/acf/gn/44.json'),
+    "acf/gn/45": () => require('../../assets/bible/acf/gn/45.json'),
+    "acf/gn/46": () => require('../../assets/bible/acf/gn/46.json'),
+    "acf/gn/47": () => require('../../assets/bible/acf/gn/47.json'),
+    "acf/gn/48": () => require('../../assets/bible/acf/gn/48.json'),
+    "acf/gn/49": () => require('../../assets/bible/acf/gn/49.json'),
+    "acf/gn/50": () => require('../../assets/bible/acf/gn/50.json'),
+    "acf/mt/1": () => require('../../assets/bible/acf/mt/1.json'),
+    "acf/mt/2": () => require('../../assets/bible/acf/mt/2.json'),
+    "acf/mt/3": () => require('../../assets/bible/acf/mt/3.json'),
+    "acf/mt/4": () => require('../../assets/bible/acf/mt/4.json'),
+    "acf/mt/5": () => require('../../assets/bible/acf/mt/5.json'),
+    "acf/mt/6": () => require('../../assets/bible/acf/mt/6.json'),
+    "acf/mt/7": () => require('../../assets/bible/acf/mt/7.json'),
+    "acf/mt/8": () => require('../../assets/bible/acf/mt/8.json'),
+    "acf/mt/9": () => require('../../assets/bible/acf/mt/9.json'),
+    "acf/mt/10": () => require('../../assets/bible/acf/mt/10.json'),
+    "acf/mt/11": () => require('../../assets/bible/acf/mt/11.json'),
+    "acf/mt/12": () => require('../../assets/bible/acf/mt/12.json'),
+    "acf/mt/13": () => require('../../assets/bible/acf/mt/13.json'),
+    "acf/mt/14": () => require('../../assets/bible/acf/mt/14.json'),
+    "acf/mt/15": () => require('../../assets/bible/acf/mt/15.json'),
+    "acf/mt/16": () => require('../../assets/bible/acf/mt/16.json'),
+    "acf/mt/17": () => require('../../assets/bible/acf/mt/17.json'),
+    "acf/mt/18": () => require('../../assets/bible/acf/mt/18.json'),
+    "acf/mt/19": () => require('../../assets/bible/acf/mt/19.json'),
+    "acf/mt/20": () => require('../../assets/bible/acf/mt/20.json'),
+    "acf/mt/21": () => require('../../assets/bible/acf/mt/21.json'),
+    "acf/mt/22": () => require('../../assets/bible/acf/mt/22.json'),
+    "acf/mt/23": () => require('../../assets/bible/acf/mt/23.json'),
+    "acf/mt/24": () => require('../../assets/bible/acf/mt/24.json'),
+    "acf/mt/25": () => require('../../assets/bible/acf/mt/25.json'),
+    "acf/mt/26": () => require('../../assets/bible/acf/mt/26.json'),
+    "acf/mt/27": () => require('../../assets/bible/acf/mt/27.json'),
+    "acf/mt/28": () => require('../../assets/bible/acf/mt/28.json'),
+    "acf/mk/1": () => require('../../assets/bible/acf/mk/1.json'),
+    "acf/mk/2": () => require('../../assets/bible/acf/mk/2.json'),
+    "acf/mk/3": () => require('../../assets/bible/acf/mk/3.json'),
+    "acf/mk/4": () => require('../../assets/bible/acf/mk/4.json'),
+    "acf/mk/5": () => require('../../assets/bible/acf/mk/5.json'),
+    "acf/mk/6": () => require('../../assets/bible/acf/mk/6.json'),
+    "acf/mk/7": () => require('../../assets/bible/acf/mk/7.json'),
+    "acf/mk/8": () => require('../../assets/bible/acf/mk/8.json'),
+    "acf/mk/9": () => require('../../assets/bible/acf/mk/9.json'),
+    "acf/mk/10": () => require('../../assets/bible/acf/mk/10.json'),
+    "acf/mk/11": () => require('../../assets/bible/acf/mk/11.json'),
+    "acf/mk/12": () => require('../../assets/bible/acf/mk/12.json'),
+    "acf/mk/13": () => require('../../assets/bible/acf/mk/13.json'),
+    "acf/mk/14": () => require('../../assets/bible/acf/mk/14.json'),
+    "acf/mk/15": () => require('../../assets/bible/acf/mk/15.json'),
+    "acf/mk/16": () => require('../../assets/bible/acf/mk/16.json'),
+    "acf/lk/1": () => require('../../assets/bible/acf/lk/1.json'),
+    "acf/lk/2": () => require('../../assets/bible/acf/lk/2.json'),
+    "acf/lk/3": () => require('../../assets/bible/acf/lk/3.json'),
+    "acf/lk/4": () => require('../../assets/bible/acf/lk/4.json'),
+    "acf/lk/5": () => require('../../assets/bible/acf/lk/5.json'),
+    "acf/lk/6": () => require('../../assets/bible/acf/lk/6.json'),
+    "acf/lk/7": () => require('../../assets/bible/acf/lk/7.json'),
+    "acf/lk/8": () => require('../../assets/bible/acf/lk/8.json'),
+    "acf/lk/9": () => require('../../assets/bible/acf/lk/9.json'),
+    "acf/lk/10": () => require('../../assets/bible/acf/lk/10.json'),
+    "acf/lk/11": () => require('../../assets/bible/acf/lk/11.json'),
+    "acf/lk/12": () => require('../../assets/bible/acf/lk/12.json'),
+    "acf/lk/13": () => require('../../assets/bible/acf/lk/13.json'),
+    "acf/lk/14": () => require('../../assets/bible/acf/lk/14.json'),
+    "acf/lk/15": () => require('../../assets/bible/acf/lk/15.json'),
+    "acf/lk/16": () => require('../../assets/bible/acf/lk/16.json'),
+    "acf/lk/17": () => require('../../assets/bible/acf/lk/17.json'),
+    "acf/lk/18": () => require('../../assets/bible/acf/lk/18.json'),
+    "acf/lk/19": () => require('../../assets/bible/acf/lk/19.json'),
+    "acf/lk/20": () => require('../../assets/bible/acf/lk/20.json'),
+    "acf/lk/21": () => require('../../assets/bible/acf/lk/21.json'),
+    "acf/lk/22": () => require('../../assets/bible/acf/lk/22.json'),
+    "acf/lk/23": () => require('../../assets/bible/acf/lk/23.json'),
+    "acf/lk/24": () => require('../../assets/bible/acf/lk/24.json'),
+    "acf/jo/1": () => require('../../assets/bible/acf/jo/1.json'),
+    "acf/jo/2": () => require('../../assets/bible/acf/jo/2.json'),
+    "acf/jo/3": () => require('../../assets/bible/acf/jo/3.json'),
+    "acf/jo/4": () => require('../../assets/bible/acf/jo/4.json'),
+    "acf/jo/5": () => require('../../assets/bible/acf/jo/5.json'),
+    "acf/jo/6": () => require('../../assets/bible/acf/jo/6.json'),
+    "acf/jo/7": () => require('../../assets/bible/acf/jo/7.json'),
+    "acf/jo/8": () => require('../../assets/bible/acf/jo/8.json'),
+    "acf/jo/9": () => require('../../assets/bible/acf/jo/9.json'),
+    "acf/jo/10": () => require('../../assets/bible/acf/jo/10.json'),
+    "acf/jo/11": () => require('../../assets/bible/acf/jo/11.json'),
+    "acf/jo/12": () => require('../../assets/bible/acf/jo/12.json'),
+    "acf/jo/13": () => require('../../assets/bible/acf/jo/13.json'),
+    "acf/jo/14": () => require('../../assets/bible/acf/jo/14.json'),
+    "acf/jo/15": () => require('../../assets/bible/acf/jo/15.json'),
+    "acf/jo/16": () => require('../../assets/bible/acf/jo/16.json'),
+    "acf/jo/17": () => require('../../assets/bible/acf/jo/17.json'),
+    "acf/jo/18": () => require('../../assets/bible/acf/jo/18.json'),
+    "acf/jo/19": () => require('../../assets/bible/acf/jo/19.json'),
+    "acf/jo/20": () => require('../../assets/bible/acf/jo/20.json'),
+    "acf/jo/21": () => require('../../assets/bible/acf/jo/21.json'),
+    "acf/rm/1": () => require('../../assets/bible/acf/rm/1.json'),
+    "acf/rm/2": () => require('../../assets/bible/acf/rm/2.json'),
+    "acf/rm/3": () => require('../../assets/bible/acf/rm/3.json'),
+    "acf/rm/4": () => require('../../assets/bible/acf/rm/4.json'),
+    "acf/rm/5": () => require('../../assets/bible/acf/rm/5.json'),
+    "acf/rm/6": () => require('../../assets/bible/acf/rm/6.json'),
+    "acf/rm/7": () => require('../../assets/bible/acf/rm/7.json'),
+    "acf/rm/8": () => require('../../assets/bible/acf/rm/8.json'),
+    "acf/rm/9": () => require('../../assets/bible/acf/rm/9.json'),
+    "acf/rm/10": () => require('../../assets/bible/acf/rm/10.json'),
+    "acf/rm/11": () => require('../../assets/bible/acf/rm/11.json'),
+    "acf/rm/12": () => require('../../assets/bible/acf/rm/12.json'),
+    "acf/rm/13": () => require('../../assets/bible/acf/rm/13.json'),
+    "acf/rm/14": () => require('../../assets/bible/acf/rm/14.json'),
+    "acf/rm/15": () => require('../../assets/bible/acf/rm/15.json'),
+    "acf/rm/16": () => require('../../assets/bible/acf/rm/16.json'),
+    "ara/gn/1": () => require('../../assets/bible/ara/gn/1.json'),
+    "ara/gn/2": () => require('../../assets/bible/ara/gn/2.json'),
+    "ara/gn/3": () => require('../../assets/bible/ara/gn/3.json'),
+    "ara/gn/4": () => require('../../assets/bible/ara/gn/4.json'),
+    "ara/gn/5": () => require('../../assets/bible/ara/gn/5.json'),
+    "ara/gn/6": () => require('../../assets/bible/ara/gn/6.json'),
+    "ara/gn/7": () => require('../../assets/bible/ara/gn/7.json'),
+    "ara/gn/8": () => require('../../assets/bible/ara/gn/8.json'),
+    "ara/gn/9": () => require('../../assets/bible/ara/gn/9.json'),
+    "ara/gn/10": () => require('../../assets/bible/ara/gn/10.json'),
+    "ara/gn/11": () => require('../../assets/bible/ara/gn/11.json'),
+    "ara/gn/12": () => require('../../assets/bible/ara/gn/12.json'),
+    "ara/gn/13": () => require('../../assets/bible/ara/gn/13.json'),
+    "ara/gn/14": () => require('../../assets/bible/ara/gn/14.json'),
+    "ara/gn/15": () => require('../../assets/bible/ara/gn/15.json'),
+    "ara/gn/16": () => require('../../assets/bible/ara/gn/16.json'),
+    "ara/gn/17": () => require('../../assets/bible/ara/gn/17.json'),
+    "ara/gn/18": () => require('../../assets/bible/ara/gn/18.json'),
+    "ara/gn/19": () => require('../../assets/bible/ara/gn/19.json'),
+    "ara/gn/20": () => require('../../assets/bible/ara/gn/20.json'),
+    "ara/gn/21": () => require('../../assets/bible/ara/gn/21.json'),
+    "ara/gn/22": () => require('../../assets/bible/ara/gn/22.json'),
+    "ara/gn/23": () => require('../../assets/bible/ara/gn/23.json'),
+    "ara/gn/24": () => require('../../assets/bible/ara/gn/24.json'),
+    "ara/gn/25": () => require('../../assets/bible/ara/gn/25.json'),
+    "ara/gn/26": () => require('../../assets/bible/ara/gn/26.json'),
+    "ara/gn/27": () => require('../../assets/bible/ara/gn/27.json'),
+    "ara/gn/28": () => require('../../assets/bible/ara/gn/28.json'),
+    "ara/gn/29": () => require('../../assets/bible/ara/gn/29.json'),
+    "ara/gn/30": () => require('../../assets/bible/ara/gn/30.json'),
+    "ara/gn/31": () => require('../../assets/bible/ara/gn/31.json'),
+    "ara/gn/32": () => require('../../assets/bible/ara/gn/32.json'),
+    "ara/gn/33": () => require('../../assets/bible/ara/gn/33.json'),
+    "ara/gn/34": () => require('../../assets/bible/ara/gn/34.json'),
+    "ara/gn/35": () => require('../../assets/bible/ara/gn/35.json'),
+    "ara/gn/36": () => require('../../assets/bible/ara/gn/36.json'),
+    "ara/gn/37": () => require('../../assets/bible/ara/gn/37.json'),
+    "ara/gn/38": () => require('../../assets/bible/ara/gn/38.json'),
+    "ara/gn/39": () => require('../../assets/bible/ara/gn/39.json'),
+    "ara/gn/40": () => require('../../assets/bible/ara/gn/40.json'),
+    "ara/gn/41": () => require('../../assets/bible/ara/gn/41.json'),
+    "ara/gn/42": () => require('../../assets/bible/ara/gn/42.json'),
+    "ara/gn/43": () => require('../../assets/bible/ara/gn/43.json'),
+    "ara/gn/44": () => require('../../assets/bible/ara/gn/44.json'),
+    "ara/gn/45": () => require('../../assets/bible/ara/gn/45.json'),
+    "ara/gn/46": () => require('../../assets/bible/ara/gn/46.json'),
+    "ara/gn/47": () => require('../../assets/bible/ara/gn/47.json'),
+    "ara/gn/48": () => require('../../assets/bible/ara/gn/48.json'),
+    "ara/gn/49": () => require('../../assets/bible/ara/gn/49.json'),
+    "ara/gn/50": () => require('../../assets/bible/ara/gn/50.json'),
+    "ara/mt/1": () => require('../../assets/bible/ara/mt/1.json'),
+    "ara/mt/2": () => require('../../assets/bible/ara/mt/2.json'),
+    "ara/mt/3": () => require('../../assets/bible/ara/mt/3.json'),
+    "ara/mt/4": () => require('../../assets/bible/ara/mt/4.json'),
+    "ara/mt/5": () => require('../../assets/bible/ara/mt/5.json'),
+    "ara/mt/6": () => require('../../assets/bible/ara/mt/6.json'),
+    "ara/mt/7": () => require('../../assets/bible/ara/mt/7.json'),
+    "ara/mt/8": () => require('../../assets/bible/ara/mt/8.json'),
+    "ara/mt/9": () => require('../../assets/bible/ara/mt/9.json'),
+    "ara/mt/10": () => require('../../assets/bible/ara/mt/10.json'),
+    "ara/mt/11": () => require('../../assets/bible/ara/mt/11.json'),
+    "ara/mt/12": () => require('../../assets/bible/ara/mt/12.json'),
+    "ara/mt/13": () => require('../../assets/bible/ara/mt/13.json'),
+    "ara/mt/14": () => require('../../assets/bible/ara/mt/14.json'),
+    "ara/mt/15": () => require('../../assets/bible/ara/mt/15.json'),
+    "ara/mt/16": () => require('../../assets/bible/ara/mt/16.json'),
+    "ara/mt/17": () => require('../../assets/bible/ara/mt/17.json'),
+    "ara/mt/18": () => require('../../assets/bible/ara/mt/18.json'),
+    "ara/mt/19": () => require('../../assets/bible/ara/mt/19.json'),
+    "ara/mt/20": () => require('../../assets/bible/ara/mt/20.json'),
+    "ara/mt/21": () => require('../../assets/bible/ara/mt/21.json'),
+    "ara/mt/22": () => require('../../assets/bible/ara/mt/22.json'),
+    "ara/mt/23": () => require('../../assets/bible/ara/mt/23.json'),
+    "ara/mt/24": () => require('../../assets/bible/ara/mt/24.json'),
+    "ara/mt/25": () => require('../../assets/bible/ara/mt/25.json'),
+    "ara/mt/26": () => require('../../assets/bible/ara/mt/26.json'),
+    "ara/mt/27": () => require('../../assets/bible/ara/mt/27.json'),
+    "ara/mt/28": () => require('../../assets/bible/ara/mt/28.json'),
+    "ara/mk/1": () => require('../../assets/bible/ara/mk/1.json'),
+    "ara/mk/2": () => require('../../assets/bible/ara/mk/2.json'),
+    "ara/mk/3": () => require('../../assets/bible/ara/mk/3.json'),
+    "ara/mk/4": () => require('../../assets/bible/ara/mk/4.json'),
+    "ara/mk/5": () => require('../../assets/bible/ara/mk/5.json'),
+    "ara/mk/6": () => require('../../assets/bible/ara/mk/6.json'),
+    "ara/mk/7": () => require('../../assets/bible/ara/mk/7.json'),
+    "ara/mk/8": () => require('../../assets/bible/ara/mk/8.json'),
+    "ara/mk/9": () => require('../../assets/bible/ara/mk/9.json'),
+    "ara/mk/10": () => require('../../assets/bible/ara/mk/10.json'),
+    "ara/mk/11": () => require('../../assets/bible/ara/mk/11.json'),
+    "ara/mk/12": () => require('../../assets/bible/ara/mk/12.json'),
+    "ara/mk/13": () => require('../../assets/bible/ara/mk/13.json'),
+    "ara/mk/14": () => require('../../assets/bible/ara/mk/14.json'),
+    "ara/mk/15": () => require('../../assets/bible/ara/mk/15.json'),
+    "ara/mk/16": () => require('../../assets/bible/ara/mk/16.json'),
+    "ara/lk/1": () => require('../../assets/bible/ara/lk/1.json'),
+    "ara/lk/2": () => require('../../assets/bible/ara/lk/2.json'),
+    "ara/lk/3": () => require('../../assets/bible/ara/lk/3.json'),
+    "ara/lk/4": () => require('../../assets/bible/ara/lk/4.json'),
+    "ara/lk/5": () => require('../../assets/bible/ara/lk/5.json'),
+    "ara/lk/6": () => require('../../assets/bible/ara/lk/6.json'),
+    "ara/lk/7": () => require('../../assets/bible/ara/lk/7.json'),
+    "ara/lk/8": () => require('../../assets/bible/ara/lk/8.json'),
+    "ara/lk/9": () => require('../../assets/bible/ara/lk/9.json'),
+    "ara/lk/10": () => require('../../assets/bible/ara/lk/10.json'),
+    "ara/lk/11": () => require('../../assets/bible/ara/lk/11.json'),
+    "ara/lk/12": () => require('../../assets/bible/ara/lk/12.json'),
+    "ara/lk/13": () => require('../../assets/bible/ara/lk/13.json'),
+    "ara/lk/14": () => require('../../assets/bible/ara/lk/14.json'),
+    "ara/lk/15": () => require('../../assets/bible/ara/lk/15.json'),
+    "ara/lk/16": () => require('../../assets/bible/ara/lk/16.json'),
+    "ara/lk/17": () => require('../../assets/bible/ara/lk/17.json'),
+    "ara/lk/18": () => require('../../assets/bible/ara/lk/18.json'),
+    "ara/lk/19": () => require('../../assets/bible/ara/lk/19.json'),
+    "ara/lk/20": () => require('../../assets/bible/ara/lk/20.json'),
+    "ara/lk/21": () => require('../../assets/bible/ara/lk/21.json'),
+    "ara/lk/22": () => require('../../assets/bible/ara/lk/22.json'),
+    "ara/lk/23": () => require('../../assets/bible/ara/lk/23.json'),
+    "ara/lk/24": () => require('../../assets/bible/ara/lk/24.json'),
+    "ara/jo/1": () => require('../../assets/bible/ara/jo/1.json'),
+    "ara/jo/2": () => require('../../assets/bible/ara/jo/2.json'),
+    "ara/jo/3": () => require('../../assets/bible/ara/jo/3.json'),
+    "ara/jo/4": () => require('../../assets/bible/ara/jo/4.json'),
+    "ara/jo/5": () => require('../../assets/bible/ara/jo/5.json'),
+    "ara/jo/6": () => require('../../assets/bible/ara/jo/6.json'),
+    "ara/jo/7": () => require('../../assets/bible/ara/jo/7.json'),
+    "ara/jo/8": () => require('../../assets/bible/ara/jo/8.json'),
+    "ara/jo/9": () => require('../../assets/bible/ara/jo/9.json'),
+    "ara/jo/10": () => require('../../assets/bible/ara/jo/10.json'),
+    "ara/jo/11": () => require('../../assets/bible/ara/jo/11.json'),
+    "ara/jo/12": () => require('../../assets/bible/ara/jo/12.json'),
+    "ara/jo/13": () => require('../../assets/bible/ara/jo/13.json'),
+    "ara/jo/14": () => require('../../assets/bible/ara/jo/14.json'),
+    "ara/jo/15": () => require('../../assets/bible/ara/jo/15.json'),
+    "ara/jo/16": () => require('../../assets/bible/ara/jo/16.json'),
+    "ara/jo/17": () => require('../../assets/bible/ara/jo/17.json'),
+    "ara/jo/18": () => require('../../assets/bible/ara/jo/18.json'),
+    "ara/jo/19": () => require('../../assets/bible/ara/jo/19.json'),
+    "ara/jo/20": () => require('../../assets/bible/ara/jo/20.json'),
+    "ara/jo/21": () => require('../../assets/bible/ara/jo/21.json'),
+    "ara/rm/1": () => require('../../assets/bible/ara/rm/1.json'),
+    "ara/rm/2": () => require('../../assets/bible/ara/rm/2.json'),
+    "ara/rm/3": () => require('../../assets/bible/ara/rm/3.json'),
+    "ara/rm/4": () => require('../../assets/bible/ara/rm/4.json'),
+    "ara/rm/5": () => require('../../assets/bible/ara/rm/5.json'),
+    "ara/rm/6": () => require('../../assets/bible/ara/rm/6.json'),
+    "ara/rm/7": () => require('../../assets/bible/ara/rm/7.json'),
+    "ara/rm/8": () => require('../../assets/bible/ara/rm/8.json'),
+    "ara/rm/9": () => require('../../assets/bible/ara/rm/9.json'),
+    "ara/rm/10": () => require('../../assets/bible/ara/rm/10.json'),
+    "ara/rm/11": () => require('../../assets/bible/ara/rm/11.json'),
+    "ara/rm/12": () => require('../../assets/bible/ara/rm/12.json'),
+    "ara/rm/13": () => require('../../assets/bible/ara/rm/13.json'),
+    "ara/rm/14": () => require('../../assets/bible/ara/rm/14.json'),
+    "ara/rm/15": () => require('../../assets/bible/ara/rm/15.json'),
+    "ara/rm/16": () => require('../../assets/bible/ara/rm/16.json'),
+  };
+
+  const loader = loaders[key];
+  if (loader) {
+    try {
+      return loader();
+    } catch (e) {
+      console.log(`Erro ao carregar: ${key}`, e);
+      return null;
     }
-  } catch (e) {
-    console.log(`Arquivo não encontrado: ${version}/${bookCode}/${chapter}`);
-    return null;
   }
+  return null;
 };
 
 export const BibleService = {
   async getChapter(bookName: string, chapter: number, version: string = "nvi"): Promise<ChapterData | null> {
-    const normalizedName = bookName.toLowerCase().trim();
+    const normalizedName = bookName.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     const bookCode = BOOK_NAME_MAP[normalizedName] || BOOK_NAME_MAP[normalizedName.replace(/^livro\s+/i, '')];
     
     if (!bookCode) {
-      console.warn("Livro não encontrado no mapeamento:", bookName);
+      console.warn("Livro não encontrado no mapeamento:", bookName, "-> normalized:", normalizedName);
       return null;
     }
 
-    const data = getBibleData(version, bookCode, chapter);
+    const data = loadChapter(version, bookCode, chapter);
     
     if (!data) {
       return null;
