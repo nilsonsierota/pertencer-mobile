@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "expo-router";
+import { useEffect, useState, useCallback } from "react";
+import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { DevotionalService } from "../../src/services/devotional.service";
 import type { Plan } from "../../src/types";
@@ -13,6 +13,10 @@ export default function PlanListPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const [navigating, setNavigating] = useState(false);
+
+  useFocusEffect(useCallback(() => {
+    setNavigating(false);
+  }, []));
 
   useEffect(() => {
     if (!authLoading && !user) {

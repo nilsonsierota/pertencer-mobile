@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useEffect, useState, useCallback } from "react";
+import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { DevotionalService } from "../../src/services/devotional.service";
 import type { Book } from "../../src/types";
@@ -22,6 +22,10 @@ export default function BookListPage() {
   useEffect(() => {
     if (!authLoading && !user) router.replace("/(auth)/login");
   }, [authLoading, user, router]);
+
+  useFocusEffect(useCallback(() => {
+    setNavigating(false);
+  }, []));
 
   const { data: books = [], isLoading } = useQuery<Book[]>({
     queryKey: ["books", planId, user?.uid],
