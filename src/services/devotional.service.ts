@@ -13,13 +13,19 @@ export const DevotionalService = {
 
   async getBooks(userId: string, planId: string): Promise<Book[]> {
     try {
+      if (!db) {
+        console.error("Firestore not initialized");
+        return [];
+      }
+      
       const booksRef = collection(db, "books");
       const booksSnap = await getDocs(query(booksRef, where("planId", "==", planId), orderBy("createdAt", "asc")));
       
       const bookIds = booksSnap.docs.map(d => d.id);
+      if (bookIds.length === 0) return [];
       
       const chaptersRef = collection(db, "chapters");
-      const chaptersSnap = await getDocs(query(chaptersRef, where("bookId", "in", bookIds)));
+      const chaptersSnap = await getDocs(query(chaptersRef, where("bookId", "in", bookIds.slice(0, 10))));
       
       const chapterCountByBook: Record<string, number> = {};
       chaptersSnap.docs.forEach(d => {
@@ -57,7 +63,7 @@ export const DevotionalService = {
         const isTodayBook = bookId === todayBookId;
         return { id: bookId, ...data, isToday: isTodayBook, totalChapters, doneChapters, donePercentage } as Book;
       });
-    } catch (e) { console.error(e); return []; }
+    } catch (e) { console.error("getBooks error:", e); return []; }
   },
 
   async getChapters(bookId: string, userId: string): Promise<Chapter[]> {

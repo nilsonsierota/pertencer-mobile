@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { onAuthStateChanged, signOut as firebaseSignOut, User as FirebaseUser } from "firebase/auth";
+import { onAuthStateChanged, signOut as firebaseSignOut, signInWithEmailAndPassword, User as FirebaseUser } from "firebase/auth";
 import { auth } from "../services/firebase";
 
 interface AuthContextProps {
@@ -22,11 +22,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!auth) { setLoading(false); return; }
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    
+    const tryTestLogin = async () => {
+      if (process.env.EXPO_PUBLIC_USE_TEST_USER === "true") {
+        try {
+          const cred = await signInWithEmailAndPassword(auth, "mobile@gmail.com", "power300");
+          setUser(cred.user);
+        } catch (error) {
+          console.log("Erro no login de teste:", error);
+          setUser(null);
+        }
+        setLoading(false);
+        return;
+      }
+      
+      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser);
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    };
+    
+    tryTestLogin();
   }, []);
 
   const logout = async () => {

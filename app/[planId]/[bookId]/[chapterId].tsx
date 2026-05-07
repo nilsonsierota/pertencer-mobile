@@ -257,28 +257,28 @@ export default function QuestionsPage() {
       <ScrollView style={styles.content} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContent}>
         {bibleChapter && bibleChapter.verses.length > 0 && (
           <View style={styles.bibleSection}>
-             <WebView
-               source={{
-                 html: `
-                   <html>
-                   <head>
-                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                     <style>
-                       body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #273107; line-height: 1.6; padding: 16px; margin: 0; -webkit-user-select: text; user-select: text; }
-                       .ref { font-weight: bold; text-align: center; margin-bottom: 12px; }
-                       .verse { margin-bottom: 8px; text-align: justify; }
-                       .vn { font-weight: bold; color: #189E50; margin-right: 6px; }
-                     </style>
-                   </head>
-                   <body>
-                     <div class="ref">${bibleChapter.bookName} ${bibleChapter.chapter}</div>
-                     ${bibleChapter.verses.map(v => `<div class="verse"><span class="vn">${v.verse}</span>${v.text}</div>`).join('')}
-                   </body>
-                   </html>
-                 `
-               }}
-               style={styles.bibleWebView}
-             />
+<WebView
+                source={{
+                  html: `
+                    <html>
+                    <head>
+                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                      <style>
+                        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #273107; line-height: 1.6; padding: 16px; margin: 0; -webkit-user-select: text; user-select: text; }
+                        .ref { font-weight: bold; text-align: center; margin-bottom: 12px; }
+                        .verse { margin-bottom: 8px; text-align: justify; }
+                        .vn { font-weight: bold; color: #189E50; margin-right: 6px; }
+                      </style>
+                    </head>
+                    <body>
+                      <div class="ref">${bibleChapter.bookName} ${bibleChapter.chapter}</div>
+                      ${bibleChapter.verses.map(v => `<div class="verse"><span class="vn">${v.verse}</span>${v.text}</div>`).join('')}
+                    </body>
+                    </html>
+                  `
+                }}
+                style={styles.bibleWebView}
+              />
           </View>
         )}
         {bibleLoading && (
@@ -366,9 +366,9 @@ const styles = StyleSheet.create({
   versionSelector: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#273107', paddingVertical: 8, paddingHorizontal: 16, marginHorizontal: 16, borderRadius: 8, marginBottom: 8 },
   versionText: { color: '#FFFFFF', fontSize: 14, fontWeight: '600' },
   versionArrow: { color: '#FFFFFF', fontSize: 10, marginLeft: 8 },
-   bibleSection: { backgroundColor: '#FFFFFF', borderRadius: 8, padding: 16, marginBottom: 16, minHeight: 200, overflow: 'hidden' },
-   bibleWebView: { flex: 1, minHeight: 200 }
-  bibleReference: { fontSize: 16, fontWeight: 'bold', color: '#273107', marginBottom: 12, textAlign: 'center' },
+   bibleSection: { backgroundColor: '#FFFFFF', borderRadius: 8, padding: 16, marginBottom: 16, minHeight: 400, overflow: 'hidden' },
+   bibleWebView: { flex: 1, minHeight: 400 },
+   bibleReference: { fontSize: 16, fontWeight: 'bold', color: '#273107', marginBottom: 12, textAlign: 'center' },
   verseText: { fontSize: 14, color: '#273107', lineHeight: 22, marginBottom: 8, textAlign: 'justify' },
   verseNumber: { fontWeight: 'bold', color: '#189E50' },
   bibleLoading: { alignItems: 'center', padding: 20 },
