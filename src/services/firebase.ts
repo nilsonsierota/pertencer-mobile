@@ -1,5 +1,4 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -14,39 +13,14 @@ const firebaseConfig = {
 
 const isConfigured = firebaseConfig.apiKey && firebaseConfig.projectId;
 
-// Singleton pattern
-let app: FirebaseApp | null = null;
-let auth: Auth | null = null;
-let db: Firestore | null = null;
-let initialized = false;
+const app = isConfigured
+  ? (getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0])
+  : null;
 
-export function getFirebaseServices() {
-  if (initialized) {
-    return { app, auth, db };
-  }
-  
-  if (isConfigured) {
-    if (getApps().length === 0) {
-      app = initializeApp(firebaseConfig);
-    } else {
-      app = getApps()[0];
-    }
-    
-    if (app) {
-      db = getFirestore(app);
-      auth = getAuth(app);
-    }
-  }
-  
-  initialized = true;
-  return { app, auth, db };
-}
+const db = app ? getFirestore(app) : null;
 
-// Initialize on import
-const services = getFirebaseServices();
-app = services.app;
-auth = services.auth;
-db = services.db;
+// Don't initialize auth here - let each module do it
+const auth = null;
 
 export { app, auth, db };
 export default app;

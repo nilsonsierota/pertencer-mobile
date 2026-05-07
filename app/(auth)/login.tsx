@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "expo-router";
-import { auth as firebaseAuth } from "../../src/services/firebase";
 import { loginWithEmail, registerWithEmail, signInWithCredential, GoogleAuthProvider } from "../../src/services/firebase-auth";
 import { DevotionalService } from "../../src/services/devotional.service";
 import { useAuth } from "../../src/context/AuthContext";
