@@ -5,7 +5,6 @@ import { useRouter } from "expo-router";
 import { auth as firebaseAuth } from "../../src/services/firebase";
 import { loginWithEmail, registerWithEmail, signInWithCredential, GoogleAuthProvider } from "../../src/services/firebase-auth";
 import { DevotionalService } from "../../src/services/devotional.service";
-import { DevotionalService } from "../../src/services/devotional.service";
 import { useAuth } from "../../src/context/AuthContext";
 import * as WebBrowser from "expo-web-browser";
 import { View, Text, TextInput, Pressable, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Alert } from "react-native";
