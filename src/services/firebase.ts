@@ -14,16 +14,39 @@ const firebaseConfig = {
 
 const isConfigured = firebaseConfig.apiKey && firebaseConfig.projectId;
 
-// Initialize app first
-const app = isConfigured
-  ? (getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0])
-  : null;
+// Singleton pattern
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
+let db: Firestore | null = null;
+let initialized = false;
 
-// Initialize Firestore
-const db = app ? getFirestore(app) : null;
+export function getFirebaseServices() {
+  if (initialized) {
+    return { app, auth, db };
+  }
+  
+  if (isConfigured) {
+    if (getApps().length === 0) {
+      app = initializeApp(firebaseConfig);
+    } else {
+      app = getApps()[0];
+    }
+    
+    if (app) {
+      db = getFirestore(app);
+      auth = getAuth(app);
+    }
+  }
+  
+  initialized = true;
+  return { app, auth, db };
+}
 
-// Initialize Auth - deve ser único
-const auth = app ? getAuth(app) : null;
+// Initialize on import
+const services = getFirebaseServices();
+app = services.app;
+auth = services.auth;
+db = services.db;
 
 export { app, auth, db };
 export default app;
