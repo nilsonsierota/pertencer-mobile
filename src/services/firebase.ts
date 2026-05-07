@@ -1,7 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth, initializeAuth, Persistence } from 'firebase/auth';
+import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -19,40 +18,6 @@ let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
 
-function getReactNativePersistence(storage: typeof AsyncStorage): Persistence {
-  class ReactNativePersistence implements Persistence {
-    readonly type = 'LOCAL' as const;
-    
-    async _isAvailable(): Promise<boolean> {
-      try {
-        await storage.setItem('___test___', 'test');
-        await storage.removeItem('___test___');
-        return true;
-      } catch {
-        return false;
-      }
-    }
-
-    _set(key: string, value: unknown): Promise<void> {
-      return storage.setItem(key, JSON.stringify(value));
-    }
-
-    async _get<T extends unknown>(key: string): Promise<T | null> {
-      const value = await storage.getItem(key);
-      return value ? JSON.parse(value) : null;
-    }
-
-    _remove(key: string): Promise<void> {
-      return storage.removeItem(key);
-    }
-
-    _addListener(_key: string, _listener: () => void): void {}
-
-    _removeListener(_key: string, _listener: () => void): void {}
-  }
-  return new ReactNativePersistence();
-}
-
 if (isConfigured) {
   if (getApps().length === 0) {
     app = initializeApp(firebaseConfig);
@@ -60,15 +25,7 @@ if (isConfigured) {
     app = getApps()[0];
   }
   db = getFirestore(app);
-  
-  try {
-    auth = initializeAuth(app, {
-      persistence: getReactNativePersistence(AsyncStorage),
-    });
-  } catch (e) {
-    console.warn('Failed to initialize auth with persistence:', e);
-    auth = getAuth(app);
-  }
+  auth = getAuth(app);
 }
 
 export { app, auth, db };
