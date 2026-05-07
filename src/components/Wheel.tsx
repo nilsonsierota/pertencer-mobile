@@ -93,14 +93,14 @@ export function Wheel({ items, onPress, isBooks = false, showProgress = false, i
   
            const content = (
              <>
-               <Text style={[{ color: (isSelected || isToday) ? '#FFFFFF' : '#000000', fontWeight: (isSelected || isToday) ? 'bold' : '600' }]}>
-                 {item.title}
-               </Text>
-               {showProgress && isBooks && item.donePercentage !== undefined && (
-                 <Text style={[{ fontSize: 11, marginTop: 2, color: (isSelected || isToday) ? '#FFFFFF' : '#000000' }]}>
-                   {item.donePercentage}% ({item.doneChapters}/{item.totalChapters})
-                 </Text>
-               )}
+<Text style={[{ color: isSelected ? '#FFFFFF' : '#000000', fontWeight: isSelected ? 'bold' : '600' }]}>
+                  {item.title}
+                </Text>
+                {showProgress && isBooks && item.donePercentage !== undefined && (
+                  <Text style={[{ fontSize: 11, marginTop: 2, color: isSelected ? '#FFFFFF' : '#000000' }]}>
+                    {item.donePercentage}% ({item.doneChapters}/{item.totalChapters})
+                  </Text>
+                )}
                {loading && isSelected && (
                  <ActivityIndicator size="small" color="#FFFFFF" style={{ marginTop: 4 }} />
                )}
