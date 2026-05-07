@@ -1,5 +1,5 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
+import { getAuth, Auth, initializeAuth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -25,7 +25,14 @@ if (isConfigured) {
     app = getApps()[0];
   }
   db = getFirestore(app);
-  auth = getAuth(app);
+  
+  // Initialize auth - deve ser chamado antes de getAuth()
+  try {
+    auth = initializeAuth(app);
+  } catch (e) {
+    // Se ja foi inicializado, pega o auth existente
+    auth = getAuth(app);
+  }
 }
 
 export { app, auth, db };
