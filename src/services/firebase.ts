@@ -14,19 +14,16 @@ const firebaseConfig = {
 
 const isConfigured = firebaseConfig.apiKey && firebaseConfig.projectId;
 
-let app: FirebaseApp | null = null;
-let auth: Auth | null = null;
-let db: Firestore | null = null;
+// Initialize app first
+const app = isConfigured
+  ? (getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0])
+  : null;
 
-if (isConfigured) {
-  if (getApps().length === 0) {
-    app = initializeApp(firebaseConfig);
-  } else {
-    app = getApps()[0];
-  }
-  db = getFirestore(app);
-  auth = getAuth(app);
-}
+// Initialize Firestore
+const db = app ? getFirestore(app) : null;
+
+// Initialize Auth - deve ser único
+const auth = app ? getAuth(app) : null;
 
 export { app, auth, db };
 export default app;

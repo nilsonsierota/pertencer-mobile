@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "expo-router";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithCredential, GoogleAuthProvider } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithCredential, GoogleAuthProvider } from "firebase/auth";
 import { auth as firebaseAuth } from "../../src/services/firebase";
 import { DevotionalService } from "../../src/services/devotional.service";
 import { useAuth } from "../../src/context/AuthContext";
