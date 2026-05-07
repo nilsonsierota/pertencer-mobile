@@ -27,7 +27,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const tryTestLogin = async () => {
       if (process.env.EXPO_PUBLIC_USE_TEST_USER === "true") {
         try {
-          const cred = await signInWithEmailAndPassword(auth, "mobile@gmail.com", "power300");
+          const testEmail = process.env.TEST_USER_EMAIL || "mobile@gmail.com";
+          const testPassword = process.env.TEST_USER_PASSWORD || "power300";
+          const cred = await signInWithEmailAndPassword(auth, testEmail, testPassword);
           setUser(cred.user);
         } catch (error) {
           console.log("Erro no login de teste:", error);
