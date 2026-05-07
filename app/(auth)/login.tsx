@@ -2,8 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "expo-router";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithCredential, GoogleAuthProvider } from "firebase/auth";
 import { auth as firebaseAuth } from "../../src/services/firebase";
+import { loginWithEmail, registerWithEmail, signInWithCredential, GoogleAuthProvider } from "../../src/services/firebase-auth";
+import { DevotionalService } from "../../src/services/devotional.service";
 import { DevotionalService } from "../../src/services/devotional.service";
 import { useAuth } from "../../src/context/AuthContext";
 import * as WebBrowser from "expo-web-browser";
@@ -62,7 +63,7 @@ export default function LoginPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const cred = await signInWithEmailAndPassword(firebaseAuth!, form.email, form.password);
+      const cred = await loginWithEmail(form.email, form.password);
       await DevotionalService.findUser({ uid: cred.user.uid, email: cred.user.email || "", displayName: cred.user.displayName || "" });
       router.replace("/(tabs)");
     } catch (err: any) { 
@@ -75,7 +76,7 @@ export default function LoginPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const cred = await createUserWithEmailAndPassword(firebaseAuth!, form.email, form.password);
+      const cred = await registerWithEmail(form.email, form.password);
       await DevotionalService.saveUser({ uid: cred.user.uid, email: cred.user.email || "", displayName: form.name || cred.user.displayName || "" });
       router.replace("/(tabs)");
     } catch (err: any) { 
