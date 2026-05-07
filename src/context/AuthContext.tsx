@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { onAuthStateChanged, signOut as firebaseSignOut, signInWithEmailAndPassword, User as FirebaseUser } from "firebase/auth";
-import { auth } from "../services/firebase";
+import { getFirebaseAuth } from "../services/firebase-auth";
 
 interface AuthContextProps {
   user: FirebaseUser | null;
@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const auth = getFirebaseAuth();
     if (!auth) { setLoading(false); return; }
     
     const tryTestLogin = async () => {
@@ -47,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const logout = async () => {
+    const auth = getFirebaseAuth();
     if (!auth) return;
     setLoading(true);
     try { await firebaseSignOut(auth); } catch (error) { console.error("Erro ao fazer logout:", error); }
