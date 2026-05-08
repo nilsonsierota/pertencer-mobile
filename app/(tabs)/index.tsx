@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
+import { useNotifications } from "../../src/context/NotificationContext";
 import { DevotionalService } from "../../src/services/devotional.service";
 import type { Plan } from "../../src/types";
 import { View, StyleSheet } from "react-native";
@@ -12,8 +13,15 @@ import { Loading } from "../../src/components/Loading";
 
 export default function PlanListPage() {
   const { user, loading: authLoading } = useAuth();
+  const { scheduleDailyReminder, permissionGranted } = useNotifications();
   const router = useRouter();
   const [navigating, setNavigating] = useState(false);
+
+  useEffect(() => {
+    if (user && permissionGranted) {
+      scheduleDailyReminder();
+    }
+  }, [user, permissionGranted, scheduleDailyReminder]);
 
   useFocusEffect(useCallback(() => {
     setNavigating(false);
