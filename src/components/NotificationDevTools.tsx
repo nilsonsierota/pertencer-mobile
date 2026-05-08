@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { View, Text, Pressable, StyleSheet, Alert } from "react-native";
 import * as Notifications from "expo-notifications";
 import { NotificationService } from "../services/notification.service";
-import { useNotifications } from "./NotificationContext";
+import { useNotifications } from "../context/NotificationContext";
 
 const isDevelopment = process.env.EXPO_PUBLIC_USE_TEST_USER === "true";
 

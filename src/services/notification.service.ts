@@ -3,7 +3,6 @@ import { Platform } from 'react-native';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
     shouldShowBanner: true,
@@ -51,12 +50,16 @@ export const NotificationService = {
       return null;
     }
 
-    const identifier = await Notifications.scheduleNotificationAsync({
+const identifier = await Notifications.scheduleNotificationAsync({
       content: {
         title: 'Hora de meditar 📖',
-        body: 'Seu devocional diário está te esperando. Venha crecer na palavra!',
+        body: 'Seu devocional diário está te esperando. Venha crescer na palavra!',
         data: { type: 'daily_reminder' },
-        sound: true,
+        sound: 'default',
+        categoryIdentifier: 'DAILY_REMINDER',
+        ...(Platform.OS === 'android' && {
+          priority: Notifications.AndroidPriority.HIGH,
+        }),
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DAILY,
