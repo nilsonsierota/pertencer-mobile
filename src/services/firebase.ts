@@ -1,5 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getFirestore, Firestore } from 'firebase/firestore';
+import { Auth, getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -13,14 +14,12 @@ const firebaseConfig = {
 
 const isConfigured = firebaseConfig.apiKey && firebaseConfig.projectId;
 
-const app = isConfigured
+const app: FirebaseApp | null = isConfigured
   ? (getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0])
   : null;
 
-const db = app ? getFirestore(app) : null;
+const db: Firestore | null = app ? getFirestore(app) : null;
+const auth: Auth | null = app ? getAuth(app) : null;
 
-// Don't initialize auth here - let each module do it
-const auth = null;
-
-export { app, auth, db };
+export { app, db, auth };
 export default app;

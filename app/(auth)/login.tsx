@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "expo-router";
-import { loginWithEmail, registerWithEmail, signInWithCredential, GoogleAuthProvider } from "../../src/services/firebase-auth";
+import { loginWithEmail, registerWithEmail, signInWithCredential, GoogleAuthProviderCredential } from "../../src/services/firebase-auth";
 import { DevotionalService } from "../../src/services/devotional.service";
 import { useAuth } from "../../src/context/AuthContext";
 import * as WebBrowser from "expo-web-browser";
@@ -32,8 +32,8 @@ export default function LoginPage() {
         const accessToken = params.get("access_token");
         
         if (accessToken) {
-          const credential = GoogleAuthProvider.credential(accessToken);
-          await signInWithCredential(firebaseAuth!, credential);
+          const credential = await GoogleAuthProviderCredential(accessToken);
+          await signInWithCredential(credential);
           router.replace("/(tabs)");
         }
       }

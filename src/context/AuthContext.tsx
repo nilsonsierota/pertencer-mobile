@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { onAuthStateChanged, signOut as firebaseSignOut, signInWithEmailAndPassword, User as FirebaseUser } from "firebase/auth";
-import { getFirebaseAuth } from "../services/firebase-auth";
+import { auth } from "../services/firebase";
 
 interface AuthContextProps {
   user: FirebaseUser | null;
@@ -16,20 +16,21 @@ const AuthContext = createContext<AuthContextProps>({
   logout: async () => {},
 });
 
+const isDevelopment = process.env.NODE_ENV === "development" || process.env.EXPO_PUBLIC_USE_TEST_USER === "true";
+const TEST_EMAIL = "mobile@gmail.com";
+const TEST_PASSWORD = "power300";
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const auth = getFirebaseAuth();
     if (!auth) { setLoading(false); return; }
     
     const tryTestLogin = async () => {
-      if (process.env.EXPO_PUBLIC_USE_TEST_USER === "true") {
+      if (isDevelopment && auth) {
         try {
-          const testEmail = process.env.TEST_USER_EMAIL || "mobile@gmail.com";
-          const testPassword = process.env.TEST_USER_PASSWORD || "power300";
-          const cred = await signInWithEmailAndPassword(auth, testEmail, testPassword);
+          const cred = await signInWithEmailAndPassword(auth, TEST_EMAIL, TEST_PASSWORD);
           setUser(cred.user);
         } catch (error) {
           console.log("Erro no login de teste:", error);
@@ -39,18 +40,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return;
       }
       
-      const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-        setUser(currentUser);
-        setLoading(false);
-      });
-      return () => unsubscribe();
+      if (auth) {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+          setUser(currentUser);
+          setLoading(false);
+        });
+        return () => unsubscribe();
+      }
     };
     
     tryTestLogin();
   }, []);
 
   const logout = async () => {
-    const auth = getFirebaseAuth();
     if (!auth) return;
     setLoading(true);
     try { await firebaseSignOut(auth); } catch (error) { console.error("Erro ao fazer logout:", error); }
