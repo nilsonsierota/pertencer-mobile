@@ -1,20 +1,21 @@
-import { auth } from "./firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { app } from "./firebase";
 
 export async function loginWithEmail(email: string, password: string) {
-  if (!auth) throw new Error("Firebase Auth not initialized");
-  return signInWithEmailAndPassword(auth, email, password);
+  if (!app) throw new Error("Firebase App not initialized");
+  const { signInWithEmailAndPassword, getAuth } = await import("firebase/auth");
+  return signInWithEmailAndPassword(getAuth(app), email, password);
 }
 
 export async function registerWithEmail(email: string, password: string) {
-  if (!auth) throw new Error("Firebase Auth not initialized");
-  return createUserWithEmailAndPassword(auth, email, password);
+  if (!app) throw new Error("Firebase App not initialized");
+  const { createUserWithEmailAndPassword, getAuth } = await import("firebase/auth");
+  return createUserWithEmailAndPassword(getAuth(app), email, password);
 }
 
 export async function signInWithCredential(credential: any) {
-  const { signInWithCredential: fn } = await import("firebase/auth");
-  if (!auth) throw new Error("Firebase Auth not initialized");
-  return fn(auth, credential);
+  if (!app) throw new Error("Firebase App not initialized");
+  const { signInWithCredential, getAuth } = await import("firebase/auth");
+  return signInWithCredential(getAuth(app), credential);
 }
 
 export async function GoogleAuthProviderCredential(accessToken: string) {

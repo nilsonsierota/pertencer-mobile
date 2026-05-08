@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { onAuthStateChanged, signOut as firebaseSignOut, signInWithEmailAndPassword, User as FirebaseUser } from "firebase/auth";
-import { auth } from "../services/firebase";
 
 interface AuthContextProps {
   user: FirebaseUser | null;
@@ -25,38 +24,60 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!auth) { setLoading(false); return; }
-    
-    const tryTestLogin = async () => {
-      if (isDevelopment && auth) {
-        try {
-          const cred = await signInWithEmailAndPassword(auth, TEST_EMAIL, TEST_PASSWORD);
-          setUser(cred.user);
-        } catch (error) {
-          console.log("Erro no login de teste:", error);
-          setUser(null);
+    let mounted = true;
+
+    const initAuth = async () => {
+      try {
+        const { getAuth } = await import("firebase/auth");
+        const { app } = await import("../services/firebase");
+
+        if (!app) {
+          if (mounted) setLoading(false);
+          return;
         }
-        setLoading(false);
-        return;
-      }
-      
-      if (auth) {
+
+        const auth = getAuth(app);
+
+        if (isDevelopment) {
+          try {
+            const cred = await signInWithEmailAndPassword(auth, TEST_EMAIL, TEST_PASSWORD);
+            if (mounted) setUser(cred.user);
+          } catch (error) {
+            console.log("Erro no login de teste:", error);
+            if (mounted) setUser(null);
+          }
+          if (mounted) setLoading(false);
+          return;
+        }
+
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-          setUser(currentUser);
-          setLoading(false);
+          if (mounted) {
+            setUser(currentUser);
+            setLoading(false);
+          }
         });
         return () => unsubscribe();
+      } catch (e) {
+        console.log("Auth init error:", e);
+        if (mounted) setLoading(false);
       }
     };
-    
-    tryTestLogin();
+
+    initAuth();
+    return () => { mounted = false; };
   }, []);
 
   const logout = async () => {
-    if (!auth) return;
-    setLoading(true);
-    try { await firebaseSignOut(auth); } catch (error) { console.error("Erro ao fazer logout:", error); }
-    setUser(null);
+    try {
+      const { getAuth } = await import("firebase/auth");
+      const { app } = await import("../services/firebase");
+      if (!app) return;
+      setLoading(true);
+      await firebaseSignOut(getAuth(app));
+      setUser(null);
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
     setLoading(false);
   };
 
