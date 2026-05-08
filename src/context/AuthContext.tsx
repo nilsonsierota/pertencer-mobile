@@ -1,10 +1,9 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { onAuthStateChanged, signOut as firebaseSignOut, signInWithEmailAndPassword, User as FirebaseUser } from "firebase/auth";
 
 interface AuthContextProps {
-  user: FirebaseUser | null;
+  user: any;
   loading: boolean;
   logout: () => Promise<void>;
 }
@@ -15,65 +14,70 @@ const AuthContext = createContext<AuthContextProps>({
   logout: async () => {},
 });
 
-const isDevelopment = process.env.NODE_ENV === "development" || process.env.EXPO_PUBLIC_USE_TEST_USER === "true";
 const TEST_EMAIL = "mobile@gmail.com";
 const TEST_PASSWORD = "power300";
 
+let initializedAuth: any = null;
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
+    let unsubscribe: any = null;
 
     const initAuth = async () => {
       try {
-        const { getAuth } = await import("firebase/auth");
-        const { app } = await import("../services/firebase");
+        const firebase = await import("firebase/compat/app");
+        const auth = await import("firebase/compat/auth");
+        
+        const app = firebase.default.initializeApp({
+          apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+          authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+          projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+          storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+          messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+          appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+          measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
+        });
 
-        if (!app) {
-          if (mounted) setLoading(false);
-          return;
-        }
+        initializedAuth = firebase.default.auth(app);
 
-        const auth = getAuth(app);
-
-        if (isDevelopment) {
+        if (process.env.EXPO_PUBLIC_USE_TEST_USER === "true") {
           try {
-            const cred = await signInWithEmailAndPassword(auth, TEST_EMAIL, TEST_PASSWORD);
+            const cred = await firebase.default.auth().signInWithEmailAndPassword(TEST_EMAIL, TEST_PASSWORD);
             if (mounted) setUser(cred.user);
           } catch (error) {
-            console.log("Erro no login de teste:", error);
             if (mounted) setUser(null);
           }
           if (mounted) setLoading(false);
           return;
         }
 
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        unsubscribe = firebase.default.auth().onAuthStateChanged((currentUser: any) => {
           if (mounted) {
             setUser(currentUser);
             setLoading(false);
           }
         });
-        return () => unsubscribe();
       } catch (e) {
-        console.log("Auth init error:", e);
         if (mounted) setLoading(false);
       }
     };
 
     initAuth();
-    return () => { mounted = false; };
+    return () => { 
+      mounted = false; 
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   const logout = async () => {
     try {
-      const { getAuth } = await import("firebase/auth");
-      const { app } = await import("../services/firebase");
-      if (!app) return;
+      const firebase = await import("firebase/compat/app");
       setLoading(true);
-      await firebaseSignOut(getAuth(app));
+      await firebase.default.auth().signOut();
       setUser(null);
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
