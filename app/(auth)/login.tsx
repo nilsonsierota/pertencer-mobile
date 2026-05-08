@@ -2,8 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "expo-router";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithCredential, GoogleAuthProvider } from "firebase/auth";
-import { auth as firebaseAuth } from "../../src/services/firebase";
+import { loginWithEmail, registerWithEmail, signInWithCredential, GoogleAuthProviderCredential } from "../../src/services/firebase-auth";
 import { DevotionalService } from "../../src/services/devotional.service";
 import { useAuth } from "../../src/context/AuthContext";
 import * as WebBrowser from "expo-web-browser";
@@ -33,8 +32,8 @@ export default function LoginPage() {
         const accessToken = params.get("access_token");
         
         if (accessToken) {
-          const credential = GoogleAuthProvider.credential(accessToken);
-          await signInWithCredential(firebaseAuth!, credential);
+          const credential = await GoogleAuthProviderCredential(accessToken);
+          await signInWithCredential(credential);
           router.replace("/(tabs)");
         }
       }
@@ -62,7 +61,7 @@ export default function LoginPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const cred = await signInWithEmailAndPassword(firebaseAuth!, form.email, form.password);
+      const cred = await loginWithEmail(form.email, form.password);
       await DevotionalService.findUser({ uid: cred.user.uid, email: cred.user.email || "", displayName: cred.user.displayName || "" });
       router.replace("/(tabs)");
     } catch (err: any) { 
@@ -75,7 +74,7 @@ export default function LoginPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const cred = await createUserWithEmailAndPassword(firebaseAuth!, form.email, form.password);
+      const cred = await registerWithEmail(form.email, form.password);
       await DevotionalService.saveUser({ uid: cred.user.uid, email: cred.user.email || "", displayName: form.name || cred.user.displayName || "" });
       router.replace("/(tabs)");
     } catch (err: any) { 
