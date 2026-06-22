@@ -8,6 +8,7 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "scheme": "pertencer",
+    "scheme": "pertencer",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -16,6 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pertencer.app",
+      "urlScheme": "pertencer",
       "infoPlist": {
         "UIBackgroundModes": ["remote-notification"]
       }
@@ -40,6 +42,7 @@
     },
     "plugins": [
       "expo-router",
+      "@react-native-google-signin/google-signin",
       "expo-secure-store",
       [
         "expo-notifications",

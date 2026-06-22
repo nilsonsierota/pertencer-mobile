@@ -16,9 +16,9 @@ const questions = [
   "VOCÊ VIU O AGIR DE DEUS NESSE CAPÍTULO?",
   "O QUE DEUS FALOU COM VOCÊ?",
   "O QUE EU QUERO DIZER PARA DEUS?",
-  "QUAL É A MINHA AÇÃO PRÁTICA?",
+  "QUAL É A MINHA AÇÃO PRÁTICA? (DETALHE QUAL VAI SER SUA AÇÃO PRÁTICA AO LONGO DA SEMANA)",
   "HÁ ALGUM PECADO QUE EU PRECISO CONFESSAR AO SENHOR?",
-  "QUAL MILAGRE O SENHOR FEZ POR VOCÊ HOJE?",
+  "QUAL MILAGRE O SENHOR FEZ POR VOCÊ HOJE? PODE SER ALGO PEQUENO OU GRANDE, UM DETALHE QUE MOSTROU O CUIDADO DELE",
 ];
 
 export default function QuestionsPage() {
@@ -232,7 +232,8 @@ export default function QuestionsPage() {
         await Sharing.shareAsync(printer.uri, { mimeType: "application/pdf", dialogTitle: "Minha Meditação" });
       }
     } catch (e) { 
-      if (e?.message?.includes('Printing did not complete') || e?.message?.includes('cancelled')) {
+      const error = e as Error;
+      if (error?.message?.includes('Printing did not complete') || error?.message?.includes('cancelled')) {
         return;
       }
       Alert.alert("Erro", "Falha ao gerar PDF");

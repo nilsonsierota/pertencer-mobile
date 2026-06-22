@@ -36,23 +36,33 @@ export default function ChapterListPage() {
           <Text style={styles.backText}>{"< Livros"}</Text>
         </Pressable>
       </View>
-      <Text style={styles.title}>{title?.toUpperCase()}</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{title?.toUpperCase()}</Text>
+      </View>
       <ScrollView style={styles.list}>
         <View style={styles.grid}>
           {chapters.map((chapter) => {
             const isToday = chapter.isToday || false;
             const isDone = chapter.done || false;
             let bgColor = styles.chapterDefault;
-            let textColor = styles.textWhite;
-            if (isToday) { bgColor = isDone ? styles.chapterDoneToday : styles.chapterToday; }
-            else if (isDone) { bgColor = styles.chapterDone; textColor = styles.textPrimary; }
+            let borderStyle = styles.chapterBorderDefault;
+            if (isToday && isDone) {
+              bgColor = styles.chapterDone;
+              borderStyle = styles.chapterBorderToday;
+            } else if (isToday) {
+              bgColor = styles.chapterDefault;
+              borderStyle = styles.chapterBorderToday;
+            } else if (isDone) {
+              bgColor = styles.chapterDone;
+              borderStyle = styles.chapterBorderDone;
+            }
 
             const bookKey = title ? title.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
             return (
               <Pressable key={chapter.id}
                 onPress={() => router.push(`/${planId}/${bookId}/${chapter.id}?title=${encodeURIComponent(title||'')}&chapter=${chapter.number}&bookKey=${encodeURIComponent(bookKey)}`)}
-                style={[styles.chapterButton, bgColor, textColor]}>
-                <Text style={[styles.chapterNumber, textColor]}>{chapter.number}</Text>
+                style={[styles.chapterButton, bgColor, borderStyle]}>
+                <Text style={[styles.chapterNumber, isDone && !isToday && styles.chapterNumberDone]}>{chapter.number}</Text>
               </Pressable>
             );
           })}
@@ -63,21 +73,20 @@ export default function ChapterListPage() {
 }
 
 const styles = StyleSheet.create({
-  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#189E50' },
-  loadingText: { color: '#FFFFFF', marginTop: 8 },
   container: { flex: 1, backgroundColor: '#189E50' },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8 },
   backButton: { padding: 8 },
   backText: { color: '#FFFFFF', fontSize: 14 },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center', marginBottom: 16, textTransform: 'uppercase' },
-  list: { flex: 1, padding: 16 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
-  chapterButton: { width: 56, height: 56, margin: 4, borderRadius: 12, alignItems: 'center', justifyContent: 'center', borderWidth: 2 },
-  chapterDefault: { backgroundColor: '#6B7280', borderColor: '#6B7280' },
-  chapterToday: { backgroundColor: '#6B7280', borderColor: '#F97316', borderWidth: 3 },
-  chapterDoneToday: { backgroundColor: '#189E50', borderColor: '#F97316', borderWidth: 3 },
-  chapterDone: { backgroundColor: '#189E50', borderColor: '#FFFFFF', borderWidth: 2 },
-  chapterNumber: { fontWeight: 'bold', fontSize: 18 },
-  textWhite: { color: '#FFFFFF' },
-  textPrimary: { color: '#273107' },
+  titleContainer: { width: '100%', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 },
+  title: { fontSize: 24, fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center', marginTop: 32, marginBottom: 24 },
+  list: { flex: 1, padding: 12 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 12 },
+  chapterButton: { width: 50, height: 50, borderRadius: 4, alignItems: 'center', justifyContent: 'center', borderWidth: 2 },
+  chapterDefault: { backgroundColor: '#6C7278' },
+  chapterDone: { backgroundColor: '#189E50' },
+  chapterBorderDefault: { borderColor: '#6C7278' },
+  chapterBorderToday: { borderColor: '#c2410c', borderWidth: 2 },
+  chapterBorderDone: { borderColor: '#189E50' },
+  chapterNumber: { fontWeight: 'bold', fontSize: 16, color: '#FFFFFF' },
+  chapterNumberDone: { color: '#000000' },
 });

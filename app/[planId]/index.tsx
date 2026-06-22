@@ -5,10 +5,9 @@ import { useRouter, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useAuth } from "../../src/context/AuthContext";
 import { DevotionalService } from "../../src/services/devotional.service";
 import type { Book } from "../../src/types";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, ScrollView, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
-import { Wheel } from "../../src/components/Wheel";
 import { Loading } from "../../src/components/Loading";
 
 export default function BookListPage() {
@@ -34,26 +33,16 @@ export default function BookListPage() {
     queryFn: () => DevotionalService.getBooks(user!.uid, planId!),
   });
 
-  const todayBookId = books.find(b => b.isToday)?.id || null;
-
   if (authLoading || isLoading) {
     return <Loading />;
   }
+
+  if (!user) return null;
 
   const handleBookPress = (book: Book) => {
     setNavigating(true);
     router.push(`/${planId}/${book.id}?title=${encodeURIComponent(book.title)}`);
   };
-
-  const bookItems = books
-    .filter(book => book.title)
-    .map(book => ({
-    id: book.id,
-    title: book.title,
-    donePercentage: book.donePercentage,
-    doneChapters: book.doneChapters,
-    totalChapters: book.totalChapters,
-  }));
 
   return (
     <SafeAreaView style={styles.container}>
@@ -63,26 +52,131 @@ export default function BookListPage() {
         </Pressable>
       </View>
       <Text style={styles.title}>{title}</Text>
-      <Wheel 
-        items={bookItems} 
-        onPress={handleBookPress} 
-        isBooks={true}
-        showProgress={true}
-        itemColor="#273107"
-        loading={navigating}
-        initialSelectedId={todayBookId}
-        todayItemId={todayBookId}
-      />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {books.length === 0 && (
+          <Text style={styles.emptyText}>Nenhum livro</Text>
+        )}
+        <View style={styles.list}>
+          {books.map((book) => {
+            const isToday = book.isToday;
+            return (
+              <Pressable
+                key={book.id}
+                onPress={() => handleBookPress(book)}
+                style={[
+                  styles.card,
+                  isToday ? styles.cardToday : styles.cardDefault,
+                ]}
+              >
+                <View style={styles.cardInner}>
+                  <View style={styles.spacer} />
+                  <Text style={[styles.cardTitle, isToday && styles.cardTitleToday]}>
+                    {book.title}
+                  </Text>
+                  <View style={styles.progress}>
+                    <Text style={[styles.progressPercent, isToday && styles.progressTextToday]}>
+                      {book.donePercentage}%
+                    </Text>
+                    <Text style={[styles.progressCount, isToday && styles.progressTextToday]}>
+                      {book.doneChapters}/{book.totalChapters}
+                    </Text>
+                  </View>
+                </View>
+              </Pressable>
+            );
+          })}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#189E50' },
-  loadingText: { color: '#FFFFFF', marginTop: 8 },
-  container: { flex: 1, backgroundColor: '#189E50' },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8 },
-  backButton: { padding: 8 },
-  backText: { color: '#FFFFFF', fontSize: 14 },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center', marginBottom: 8 },
+  container: {
+    flex: 1,
+    backgroundColor: '#189E50',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  backButton: {
+    padding: 8,
+  },
+  backText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  scrollContent: {
+    padding: 24,
+    paddingTop: 8,
+  },
+  emptyText: {
+    color: 'rgba(255,255,255,0.6)',
+    fontSize: 12,
+    textAlign: 'center',
+    paddingVertical: 16,
+  },
+  list: {
+    gap: 16,
+    alignItems: 'center',
+  },
+  card: {
+    width: '100%',
+    maxWidth: 320,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#273107',
+  },
+  cardDefault: {
+    backgroundColor: '#189E50',
+  },
+  cardToday: {
+    backgroundColor: '#273107',
+  },
+  cardInner: {
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  spacer: {
+    width: 60,
+  },
+  cardTitle: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    textAlign: 'center',
+    flex: 1,
+    fontWeight: '600',
+  },
+  cardTitleToday: {
+    color: '#FFFFFF',
+  },
+  progress: {
+    width: 60,
+    alignItems: 'flex-end',
+  },
+  progressPercent: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  progressCount: {
+    fontSize: 12,
+    color: '#FFFFFF',
+  },
+  progressTextToday: {
+    color: '#FFFFFF',
+  },
 });
