@@ -62,7 +62,7 @@ export default function ChapterListPage() {
               <Pressable key={chapter.id}
                 onPress={() => router.push(`/${planId}/${bookId}/${chapter.id}?title=${encodeURIComponent(title||'')}&chapter=${chapter.number}&bookKey=${encodeURIComponent(bookKey)}`)}
                 style={[styles.chapterButton, bgColor, borderStyle]}>
-                <Text style={[styles.chapterNumber, isDone && !isToday && styles.chapterNumberDone]}>{chapter.number}</Text>
+                <Text style={[styles.chapterNumber, isDone && styles.chapterNumberDone]}>{chapter.number}</Text>
               </Pressable>
             );
           })}

@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     width: 60,
   },
   cardTitle: {
-    color: '#FFFFFF',
+    color: '#000000',
     fontSize: 16,
     textAlign: 'center',
     flex: 1,
@@ -170,11 +170,11 @@ const styles = StyleSheet.create({
   progressPercent: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: '#000000',
   },
   progressCount: {
     fontSize: 12,
-    color: '#FFFFFF',
+    color: '#000000',
   },
   progressTextToday: {
     color: '#FFFFFF',

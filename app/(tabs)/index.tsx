@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cardText: {
-    color: '#FFFFFF',
+    color: '#000000',
     fontSize: 16,
     textAlign: 'center',
     fontWeight: '600',
