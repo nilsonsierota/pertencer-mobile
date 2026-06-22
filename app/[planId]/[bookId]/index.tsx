@@ -84,9 +84,9 @@ const styles = StyleSheet.create({
   chapterButton: { width: 50, height: 50, borderRadius: 4, alignItems: 'center', justifyContent: 'center', borderWidth: 2 },
   chapterDefault: { backgroundColor: '#6C7278' },
   chapterDone: { backgroundColor: '#189E50' },
-  chapterBorderDefault: { borderColor: '#6C7278' },
+  chapterBorderDefault: { borderColor: '#FFFFFF' },
   chapterBorderToday: { borderColor: '#c2410c', borderWidth: 2 },
-  chapterBorderDone: { borderColor: '#189E50' },
+  chapterBorderDone: { borderColor: '#FFFFFF' },
   chapterNumber: { fontWeight: 'bold', fontSize: 16, color: '#FFFFFF' },
   chapterNumberDone: { color: '#000000' },
 });
