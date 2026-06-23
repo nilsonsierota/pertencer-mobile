@@ -64,14 +64,7 @@ export default function PlanListPage() {
               </View>
             </Pressable>
           ))}
-          <Pressable
-            onPress={() => router.push("/(tabs)/buscar")}
-            style={[styles.card, styles.searchCard]}
-          >
-            <View style={styles.cardInner}>
-              <Text style={[styles.cardText, styles.searchCardText]}>Buscar palavra</Text>
-            </View>
-          </Pressable>
+
         </View>
       </ScrollView>
     </View>
@@ -112,10 +105,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
   },
-  searchCard: {
-    marginTop: 16,
-  },
-  searchCardText: {
-    textTransform: 'uppercase',
-  },
+
 });

@@ -7,7 +7,7 @@ import { DevotionalService } from "../../src/services/devotional.service";
 import { useAuth } from "../../src/context/AuthContext";
 import { View, Text, TextInput, Pressable, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Alert, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
+import { configureGoogleSignin, signInWithGoogle, statusCodes } from "../../src/services/google-signin";
 
 export default function LoginPage() {
   const [tab, setTab] = useState<"login" | "register">("login");
@@ -17,20 +17,13 @@ export default function LoginPage() {
   const router = useRouter();
   const { user } = useAuth();
 
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-      iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
-    });
-  }, []);
+  useEffect(() => { configureGoogleSignin(); }, []);
 
   const handleGoogleLogin = useCallback(async () => {
     setLoading(true);
     try {
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-      const result = await GoogleSignin.signIn();
-
-      if (result.type === "success" && result.data.idToken) {
+      const result = await signInWithGoogle();
+      if (result.type === "success" && result.data?.idToken) {
         await signInWithGoogleIdToken(result.data.idToken);
         router.replace("/(tabs)");
       } else {
@@ -38,11 +31,13 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       console.log("Google login error:", err);
-      if (err.code === statusCodes.SIGN_IN_CANCELLED) {
+      if (err.message === "GOOGLE_SIGNIN_NOT_AVAILABLE") {
+        setErrors({ general: "Google Sign-In não disponível nesta plataforma" });
+      } else if (err.code === statusCodes?.SIGN_IN_CANCELLED) {
         setErrors({});
-      } else if (err.code === statusCodes.IN_PROGRESS) {
+      } else if (err.code === statusCodes?.IN_PROGRESS) {
         setErrors({ general: "Login já em andamento" });
-      } else if (err.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+      } else if (err.code === statusCodes?.PLAY_SERVICES_NOT_AVAILABLE) {
         setErrors({ general: "Google Play Services não disponível" });
       } else {
         setErrors({ general: "Erro ao fazer login com Google" });
