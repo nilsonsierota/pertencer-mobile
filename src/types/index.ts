@@ -65,6 +65,7 @@ export interface UserBookProgress {
   doneCount: number;
   totalCount: number;
   updatedAt: string;
+  syncedAt?: string;
 }
 
 export interface Plan {

@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../../../src/context/AuthContext";
 import { DevotionalService } from "../../../src/services/devotional.service";
 import type { Chapter } from "../../../src/types";
 import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useQuery } from "@tanstack/react-query";
 import { Loading } from "../../../src/components/Loading";
 
 export default function ChapterListPage() {
@@ -16,16 +16,18 @@ export default function ChapterListPage() {
   const params = useLocalSearchParams<{ planId: string; bookId: string }>();
   const planId = params.planId;
   const bookId = params.bookId;
-  const { user } = useAuth();
-  const [chapters, setChapters] = useState<Chapter[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { user, loading: authLoading } = useAuth();
 
-  useEffect(() => {
-    if (!user?.uid || !bookId) return;
-    DevotionalService.getChapters(bookId, user.uid).then(data => { setChapters(data); setLoading(false); });
-  }, [bookId, user]);
+  const { data: chapters = [], isLoading } = useQuery<Chapter[]>({
+    queryKey: ["chapters", bookId, user?.uid],
+    enabled: !!user?.uid && !!bookId && !authLoading,
+    staleTime: 1000 * 60 * 60 * 24,
+    gcTime: 1000 * 60 * 60 * 24,
+    retry: false,
+    queryFn: () => DevotionalService.getChapters(bookId, user!.uid),
+  });
 
-  if (loading) {
+  if (authLoading || isLoading) {
     return <Loading />;
   }
 

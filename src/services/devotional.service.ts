@@ -10,11 +10,31 @@ import {
   orderBy,
   getDoc,
   setDoc,
+  limit,
+  Query,
+  QuerySnapshot,
 } from "firebase/firestore";
-import type { Banner, Book, Chapter, User, UserDevotional, SearchResult, Plan } from "../types";
+import type { Banner, Book, Chapter, User, UserDevotional, UserBookProgress, SearchResult, Plan } from "../types";
 
 function normalizeDone(value: unknown): boolean {
   return value === true || value === "true" || value === 1;
+}
+
+async function getDocsWithTimeout<T>(q: Query<T>, timeoutMs = 30000): Promise<QuerySnapshot<T>> {
+  return Promise.race([
+    getDocs(q),
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`Firestore query timed out after ${timeoutMs}ms`)), timeoutMs)
+    ),
+  ]);
+}
+
+function chunkArray<T>(arr: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
 }
 
 export const DevotionalService = {
@@ -22,7 +42,7 @@ export const DevotionalService = {
     try {
       if (!db) return [];
       const ref = collection(db, "plan");
-      const snap = await getDocs(query(ref));
+      const snap = await getDocsWithTimeout(query(ref));
       return snap.docs.map(d => ({ id: d.id, ...d.data() } as Plan));
     } catch (e) {
       console.error("Erro ao buscar planos:", e);
@@ -33,7 +53,7 @@ export const DevotionalService = {
   async getBooks(userId: string, planId: string): Promise<Book[]> {
     try {
       if (!db) return [];
-      const booksSnap = await getDocs(
+      const booksSnap = await getDocsWithTimeout(
         query(collection(db, "books"), where("planId", "==", planId), orderBy("createdAt", "asc"))
       );
       if (booksSnap.empty) return [];
@@ -46,11 +66,12 @@ export const DevotionalService = {
       const today = now.toISOString().split("T")[0];
 
       let todayBookId: string | null = null;
-      const todayChaptersSnap = await getDocs(
+      const todayChaptersSnap = await getDocsWithTimeout(
         query(
           collection(db, "chapters"),
           where("devotionalDate", ">=", today),
-          orderBy("devotionalDate", "asc")
+          orderBy("devotionalDate", "asc"),
+          limit(50)
         )
       );
       const todayChapter = todayChaptersSnap.docs.find(d => {
@@ -62,7 +83,7 @@ export const DevotionalService = {
       }
 
       const donePerBook = new Map<string, number>();
-      const userDevotionalsSnap = await getDocs(
+      const userDevotionalsSnap = await getDocsWithTimeout(
         query(collection(db, "userDevotionals"), where("userId", "==", userId))
       );
 
@@ -78,10 +99,24 @@ export const DevotionalService = {
       }
 
       if (legacyDevotionals.length > 0) {
-        const chaptersSnap = await getDocs(
-          query(collection(db, "chapters"), where("__name__", "in", [...new Set(legacyDevotionals.map(d => d.chapterId))]))
+        const chapterIds = [...new Set(legacyDevotionals.map(d => d.chapterId))];
+        const chapterToBook = new Map<string, string>();
+
+        const chunks = chunkArray(chapterIds, 30);
+        const snapshots = await Promise.all(
+          chunks.map(chunk =>
+            getDocsWithTimeout(
+              query(collection(db!, "chapters"), where("__name__", "in", chunk))
+            )
+          )
         );
-        const chapterToBook = new Map(chaptersSnap.docs.map(d => [d.id, d.data().bookId]));
+
+        for (const snap of snapshots) {
+          for (const d of snap.docs) {
+            chapterToBook.set(d.id, d.data().bookId);
+          }
+        }
+
         for (const ld of legacyDevotionals) {
           const bId = chapterToBook.get(ld.chapterId);
           if (bId && bookIds.includes(bId)) {
@@ -95,12 +130,13 @@ export const DevotionalService = {
         const bookData = bookDoc.data() as Book;
         const progressRef = doc(db!, "userBookProgress", `${userId}_${bookId}`);
         const progressSnap = await getDoc(progressRef);
+        const needsSync = !progressSnap.exists() || !(progressSnap.data() as UserBookProgress)?.syncedAt;
 
         let doneCount = 0;
         let totalCount = 0;
 
-        if (!progressSnap.exists()) {
-          const chaptersSnap = await getDocs(
+        if (needsSync) {
+          const chaptersSnap = await getDocsWithTimeout(
             query(collection(db!, "chapters"), where("bookId", "==", bookId))
           );
           totalCount = chaptersSnap.size;
@@ -143,7 +179,7 @@ export const DevotionalService = {
   async getChapters(bookId: string, userId: string): Promise<Chapter[]> {
     try {
       if (!db) return [];
-      const chaptersSnap = await getDocs(
+      const chaptersSnap = await getDocsWithTimeout(
         query(collection(db, "chapters"), where("bookId", "==", bookId), orderBy("number", "asc"))
       );
 
@@ -151,7 +187,7 @@ export const DevotionalService = {
       now.setHours(now.getHours() - 4);
       const today = now.toISOString().split("T")[0];
 
-      const userDevotionalsSnap = await getDocs(
+      const userDevotionalsSnap = await getDocsWithTimeout(
         query(collection(db, "userDevotionals"), where("userId", "==", userId))
       );
 
@@ -198,9 +234,14 @@ export const DevotionalService = {
   },
 
   async getBanners(): Promise<Banner[]> {
-    if (!db) return [];
-    const snap = await getDocs(collection(db, "banners"));
-    return snap.docs.map(d => ({ id: d.id, ...d.data() } as Banner));
+    try {
+      if (!db) return [];
+      const snap = await getDocsWithTimeout(collection(db, "banners"));
+      return snap.docs.map(d => ({ id: d.id, ...d.data() } as Banner));
+    } catch (e) {
+      console.error("Erro ao buscar banners:", e);
+      return [];
+    }
   },
 
   async createBanner(banner: Omit<Banner, "id" | "createdAt" | "updatedAt">): Promise<string> {
@@ -237,7 +278,7 @@ export const DevotionalService = {
           syncedAt: new Date().toISOString(),
         });
       } else {
-        const chaptersSnap = await getDocs(
+        const chaptersSnap = await getDocsWithTimeout(
           query(collection(db, "chapters"), where("bookId", "==", data.bookId))
         );
         await setDoc(progressRef, {
@@ -297,7 +338,7 @@ export const DevotionalService = {
           });
         }
       } else if (normalizedNewDone) {
-        const chaptersSnap = await getDocs(
+        const chaptersSnap = await getDocsWithTimeout(
           query(collection(db, "chapters"), where("bookId", "==", updates.bookId))
         );
         await setDoc(progressRef, {
@@ -320,7 +361,7 @@ export const DevotionalService = {
         where("userId", "==", userId),
         where("chapterId", "==", chapterId)
       );
-      const snap = await getDocs(q);
+      const snap = await getDocsWithTimeout(q);
       const docSnap = snap.docs[0];
       if (!docSnap) return null;
 
@@ -382,20 +423,34 @@ export const DevotionalService = {
       if (!db) return { results: [], total: 0 };
       const searchLower = searchTerm.toLowerCase();
 
-      const devotionalsSnap = await getDocs(
+      const devotionalsSnap = await getDocsWithTimeout(
         query(collection(db, "userDevotionals"), where("userId", "==", userId))
       );
 
       if (devotionalsSnap.empty) return { results: [], total: 0 };
 
       const chapterIds = [...new Set(devotionalsSnap.docs.map(d => d.data().chapterId))];
-      const [chaptersSnap, booksSnap, plansSnap] = await Promise.all([
-        getDocs(query(collection(db, "chapters"), where("__name__", "in", chapterIds))),
-        getDocs(collection(db, "books")),
-        getDocs(collection(db, "plan")),
+
+      const chunks = chunkArray(chapterIds, 30);
+      const chaptersSnapshots = await Promise.all(
+        chunks.map(chunk =>
+          getDocsWithTimeout(
+            query(collection(db!, "chapters"), where("__name__", "in", chunk))
+          )
+        )
+      );
+      const chaptersMap = new Map<string, Record<string, any>>();
+      for (const snap of chaptersSnapshots) {
+        for (const d of snap.docs) {
+          chaptersMap.set(d.id, { ...d.data(), id: d.id });
+        }
+      }
+
+      const [booksSnap, plansSnap] = await Promise.all([
+        getDocsWithTimeout(collection(db, "books")),
+        getDocsWithTimeout(collection(db, "plan")),
       ]);
 
-      const chaptersMap = new Map(chaptersSnap.docs.map(d => [d.id, d.data() as Record<string, any>]));
       const booksMap = new Map(booksSnap.docs.map(d => [d.id, { ...d.data(), id: d.id } as Record<string, any>]));
       const plansMap = new Map(plansSnap.docs.map(d => [d.id, d.data() as Record<string, any>]));
 
