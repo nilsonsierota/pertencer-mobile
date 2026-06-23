@@ -6,9 +6,8 @@ import { useAuth } from "../../src/context/AuthContext";
 import { useNotifications } from "../../src/context/NotificationContext";
 import { DevotionalService } from "../../src/services/devotional.service";
 import type { Plan } from "../../src/types";
-import { View, StyleSheet } from "react-native";
+import { View, Text, Pressable, ScrollView, StyleSheet } from "react-native";
 import { useQuery } from "@tanstack/react-query";
-import { Wheel } from "../../src/components/Wheel";
 import { Loading } from "../../src/components/Loading";
 
 export default function PlanListPage() {
@@ -45,51 +44,66 @@ export default function PlanListPage() {
 
   if (!user) return null;
 
-  const handlePlanPress = (plan: any) => {
+  const handlePlanPress = (plan: Plan) => {
     setNavigating(true);
-    router.push(`/${plan.id}?title=${encodeURIComponent(plan.title)}`);
+    router.push(`/${plan.id}?title=${encodeURIComponent(plan.name)}`);
   };
-
-  const planItems = plans.length > 0 
-    ? plans.map(p => ({ id: p.id, title: p.name }))
-    : [
-        { id: 'plano1', title: 'Plano 1' },
-        { id: 'plano2', title: 'Plano 2' }
-      ];
 
   return (
     <View style={styles.container}>
-      <View style={styles.wheelWrapper}>
-        <Wheel 
-          items={planItems} 
-          onPress={handlePlanPress} 
-          itemColor="#FFFFFF" 
-          showProgress={false}
-          loading={navigating}
-        />
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.list}>
+          {plans.map((plan) => (
+            <Pressable
+              key={plan.id}
+              onPress={() => handlePlanPress(plan)}
+              style={styles.card}
+            >
+              <View style={styles.cardInner}>
+                <Text style={styles.cardText}>{plan.name}</Text>
+              </View>
+            </Pressable>
+          ))}
+
+        </View>
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  loading: { 
-    flex: 1, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    backgroundColor: '#189E50' 
-  },
-  loadingText: { 
-    color: '#FFFFFF', 
-    marginTop: 8 
-  },
-  container: { 
-    flex: 1, 
-    backgroundColor: '#189E50' 
-  },
-  wheelWrapper: {
+  container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#189E50',
   },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    padding: 24,
+  },
+  list: {
+    alignItems: 'center',
+    gap: 16,
+  },
+  card: {
+    width: '100%',
+    maxWidth: 320,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#273107',
+    backgroundColor: '#189E50',
+  },
+  cardInner: {
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardText: {
+    color: '#000000',
+    fontSize: 16,
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+
 });

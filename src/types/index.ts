@@ -8,6 +8,7 @@ export interface Banner {
   id: string;
   title: string;
   description?: string;
+  content?: string[];
   button: { name: string; link: string };
   backgroundImage: string;
   isFixed: boolean;

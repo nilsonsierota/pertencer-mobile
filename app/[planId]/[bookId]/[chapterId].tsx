@@ -16,9 +16,9 @@ const questions = [
   "VOCÊ VIU O AGIR DE DEUS NESSE CAPÍTULO?",
   "O QUE DEUS FALOU COM VOCÊ?",
   "O QUE EU QUERO DIZER PARA DEUS?",
-  "QUAL É A MINHA AÇÃO PRÁTICA?",
+  "QUAL É A MINHA AÇÃO PRÁTICA? (DETALHE QUAL VAI SER SUA AÇÃO PRÁTICA AO LONGO DA SEMANA)",
   "HÁ ALGUM PECADO QUE EU PRECISO CONFESSAR AO SENHOR?",
-  "QUAL MILAGRE O SENHOR FEZ POR VOCÊ HOJE?",
+  "QUAL MILAGRE O SENHOR FEZ POR VOCÊ HOJE? PODE SER ALGO PEQUENO OU GRANDE, UM DETALHE QUE MOSTROU O CUIDADO DELE",
 ];
 
 export default function QuestionsPage() {
@@ -232,7 +232,8 @@ export default function QuestionsPage() {
         await Sharing.shareAsync(printer.uri, { mimeType: "application/pdf", dialogTitle: "Minha Meditação" });
       }
     } catch (e) { 
-      if (e?.message?.includes('Printing did not complete') || e?.message?.includes('cancelled')) {
+      const error = e as Error;
+      if (error?.message?.includes('Printing did not complete') || error?.message?.includes('cancelled')) {
         return;
       }
       Alert.alert("Erro", "Falha ao gerar PDF");
@@ -250,12 +251,12 @@ export default function QuestionsPage() {
       <Text style={styles.title}>{title} {chapter}</Text>
       
       <Pressable style={styles.versionSelector} onPress={() => setShowVersionModal(true)}>
-        <Text style={styles.versionText}>{bibleVersion.name}</Text>
+        <Text style={styles.versionText}>{bibleVersion.name} - {bibleVersion.abbreviation}</Text>
         <Text style={styles.versionArrow}>▼</Text>
       </Pressable>
 
       <ScrollView style={styles.content} keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContent}>
-        {bibleChapter && bibleChapter.verses.length > 0 && (
+        {!bibleLoading && bibleChapter && bibleChapter.verses.length > 0 && (
           <View style={styles.bibleSection}>
 <WebView
                 source={{
@@ -285,6 +286,11 @@ export default function QuestionsPage() {
           <View style={styles.bibleLoading}>
             <ActivityIndicator size="small" color="#FFFFFF" />
             <Text style={styles.bibleLoadingText}>Carregando texto bíblico...</Text>
+          </View>
+        )}
+        {!bibleLoading && !bibleChapter && (
+          <View style={styles.bibleError}>
+            <Text style={styles.bibleErrorText}>Erro ao carregar a bíblia.</Text>
           </View>
         )}
 
@@ -342,7 +348,7 @@ const styles = StyleSheet.create({
   content: { flex: 1 },
   scrollContent: { padding: 16, paddingBottom: 40 },
   question: { marginBottom: 16 },
-  questionText: { fontSize: 14, color: '#FFFFFF', marginBottom: 6, textTransform: 'uppercase', fontWeight: '600' },
+  questionText: { fontSize: 14, color: '#000000', marginBottom: 6, textTransform: 'uppercase', fontWeight: '600' },
   input: { 
     width: '100%', 
     padding: 12, 
@@ -366,13 +372,15 @@ const styles = StyleSheet.create({
   versionSelector: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#273107', paddingVertical: 8, paddingHorizontal: 16, marginHorizontal: 16, borderRadius: 8, marginBottom: 8 },
   versionText: { color: '#FFFFFF', fontSize: 14, fontWeight: '600' },
   versionArrow: { color: '#FFFFFF', fontSize: 10, marginLeft: 8 },
-   bibleSection: { backgroundColor: '#FFFFFF', borderRadius: 8, padding: 16, marginBottom: 16, minHeight: 400, overflow: 'hidden' },
-   bibleWebView: { flex: 1, minHeight: 400 },
+   bibleSection: { backgroundColor: '#D9D9D9', borderRadius: 8, padding: 16, marginBottom: 16, minHeight: 400, overflow: 'hidden' },
+   bibleWebView: { flex: 1, minHeight: 400, backgroundColor: '#D9D9D9' },
    bibleReference: { fontSize: 16, fontWeight: 'bold', color: '#273107', marginBottom: 12, textAlign: 'center' },
   verseText: { fontSize: 14, color: '#273107', lineHeight: 22, marginBottom: 8, textAlign: 'justify' },
   verseNumber: { fontWeight: 'bold', color: '#189E50' },
   bibleLoading: { alignItems: 'center', padding: 20 },
   bibleLoadingText: { color: '#FFFFFF', marginTop: 8, fontSize: 12 },
+  bibleError: { backgroundColor: '#D9D9D9', borderRadius: 8, padding: 24, marginBottom: 16, alignItems: 'center' },
+  bibleErrorText: { color: '#EF4444', fontSize: 14 },
   questionsTitle: { fontSize: 18, fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center', marginVertical: 16, paddingBottom: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.3)' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center' },
   modalContent: { backgroundColor: '#FFFFFF', borderRadius: 12, padding: 20, width: '85%', maxHeight: '70%' },

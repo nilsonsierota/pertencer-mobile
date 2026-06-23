@@ -23,3 +23,11 @@ export async function GoogleAuthProviderCredential(accessToken: string) {
   const { GoogleAuthProvider } = await import("firebase/auth");
   return GoogleAuthProvider.credential(accessToken);
 }
+
+export async function signInWithGoogleIdToken(idToken: string) {
+  const { GoogleAuthProvider, signInWithCredential, getAuth } = await import("firebase/auth");
+  const { app } = await import("./firebase");
+  if (!app) throw new Error("Firebase App not initialized");
+  const credential = GoogleAuthProvider.credential(idToken);
+  return signInWithCredential(getAuth(app), credential);
+}

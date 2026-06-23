@@ -2,12 +2,12 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "expo-router";
-import { loginWithEmail, registerWithEmail, signInWithCredential, GoogleAuthProviderCredential } from "../../src/services/firebase-auth";
+import { loginWithEmail, registerWithEmail, signInWithGoogleIdToken } from "../../src/services/firebase-auth";
 import { DevotionalService } from "../../src/services/devotional.service";
 import { useAuth } from "../../src/context/AuthContext";
-import * as WebBrowser from "expo-web-browser";
-import { View, Text, TextInput, Pressable, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, Pressable, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Alert, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { configureGoogleSignin, signInWithGoogle, statusCodes } from "../../src/services/google-signin";
 
 export default function LoginPage() {
   const [tab, setTab] = useState<"login" | "register">("login");
@@ -16,30 +16,32 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { user } = useAuth();
-  
+
+  useEffect(() => { configureGoogleSignin(); }, []);
+
   const handleGoogleLogin = useCallback(async () => {
     setLoading(true);
     try {
-      const redirectUri = "https://auth.expo.io/@pertencer/pertencer-mobile";
-      
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=openid%20profile%20email&access_type=offline`;
-      
-      const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
-      
-      if (result.type === "success" && result.url) {
-        const hash = result.url.split("#")[1];
-        const params = new URLSearchParams(hash);
-        const accessToken = params.get("access_token");
-        
-        if (accessToken) {
-          const credential = await GoogleAuthProviderCredential(accessToken);
-          await signInWithCredential(credential);
-          router.replace("/(tabs)");
-        }
+      const result = await signInWithGoogle();
+      if (result.type === "success" && result.data?.idToken) {
+        await signInWithGoogleIdToken(result.data.idToken);
+        router.replace("/(tabs)");
+      } else {
+        throw new Error("No ID token received");
       }
     } catch (err: any) {
       console.log("Google login error:", err);
-      setErrors({ general: "Erro ao fazer login com Google" });
+      if (err.message === "GOOGLE_SIGNIN_NOT_AVAILABLE") {
+        setErrors({ general: "Google Sign-In não disponível nesta plataforma" });
+      } else if (err.code === statusCodes?.SIGN_IN_CANCELLED) {
+        setErrors({});
+      } else if (err.code === statusCodes?.IN_PROGRESS) {
+        setErrors({ general: "Login já em andamento" });
+      } else if (err.code === statusCodes?.PLAY_SERVICES_NOT_AVAILABLE) {
+        setErrors({ general: "Google Play Services não disponível" });
+      } else {
+        setErrors({ general: "Erro ao fazer login com Google" });
+      }
     }
     setLoading(false);
   }, []);
@@ -64,8 +66,8 @@ export default function LoginPage() {
       const cred = await loginWithEmail(form.email, form.password);
       await DevotionalService.findUser({ uid: cred.user.uid, email: cred.user.email || "", displayName: cred.user.displayName || "" });
       router.replace("/(tabs)");
-    } catch (err: any) { 
-      setErrors({ general: "Email ou senha incorretos" }); 
+    } catch (err: any) {
+      setErrors({ general: "Email ou senha incorretos" });
     }
     setLoading(false);
   };
@@ -77,8 +79,8 @@ export default function LoginPage() {
       const cred = await registerWithEmail(form.email, form.password);
       await DevotionalService.saveUser({ uid: cred.user.uid, email: cred.user.email || "", displayName: form.name || cred.user.displayName || "" });
       router.replace("/(tabs)");
-    } catch (err: any) { 
-      setErrors({ general: "Erro ao criar conta" }); 
+    } catch (err: any) {
+      setErrors({ general: "Erro ao criar conta" });
     }
     setLoading(false);
   };
@@ -86,10 +88,13 @@ export default function LoginPage() {
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-        <View style={styles.content}>
+        <View style={styles.topSection}>
+          <Image source={require("../../assets/logo-pertencer.png")} style={styles.logo} resizeMode="contain" />
           <Text style={styles.title}>Comece agora</Text>
-          <Text style={styles.subtitle}>Crie uma conta ou faça login</Text>
+          <Text style={styles.subtitle}>Crie uma conta ou faça login para fazer sua meditação</Text>
+        </View>
 
+        <View style={styles.card}>
           <View style={styles.tabContainer}>
             <Pressable onPress={() => setTab("login")} style={[styles.tab, tab === "login" ? styles.tabActive : styles.tabInactive]}>
               <Text style={[styles.tabText, tab === "login" ? styles.tabTextActive : styles.tabTextInactive]}>Login</Text>
@@ -103,29 +108,25 @@ export default function LoginPage() {
             {tab === "register" && (
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Nome</Text>
-                <TextInput placeholder="Seu nome" value={form.name} onChangeText={(v) => setForm({ ...form, name: v })} style={styles.input} autoCapitalize="words" />
+                <TextInput placeholder="Nome" value={form.name} onChangeText={(v) => setForm({ ...form, name: v })} style={styles.input} autoCapitalize="words" />
                 {errors.name && <Text style={styles.error}>{errors.name}</Text>}
               </View>
             )}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Email</Text>
-              <TextInput placeholder="seu@email.com" value={form.email} onChangeText={(v) => setForm({ ...form, email: v })} style={styles.input} keyboardType="email-address" autoCapitalize="none" />
+              <TextInput placeholder="E-mail" value={form.email} onChangeText={(v) => setForm({ ...form, email: v })} style={styles.input} keyboardType="email-address" autoCapitalize="none" />
               {errors.email && <Text style={styles.error}>{errors.email}</Text>}
             </View>
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Senha</Text>
-              <TextInput placeholder="******" value={form.password} onChangeText={(v) => setForm({ ...form, password: v })} style={styles.input} secureTextEntry />
+              <TextInput placeholder="Senha" value={form.password} onChangeText={(v) => setForm({ ...form, password: v })} style={styles.input} secureTextEntry />
               {errors.password && <Text style={styles.error}>{errors.password}</Text>}
             </View>
             {errors.general && <Text style={styles.errorCenter}>{errors.general}</Text>}
             <Pressable onPress={tab === "login" ? handleLogin : handleRegister} disabled={loading} style={styles.button}>
               {loading ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.buttonText}>{tab === "login" ? "Entrar" : "Registrar"}</Text>}
             </Pressable>
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>ou</Text>
-              <View style={styles.dividerLine} />
-            </View>
+            <Text style={styles.orText}>Ou</Text>
             <Pressable onPress={handleGoogleLogin} disabled={loading} style={styles.googleButton}>
               <Ionicons name="logo-google" size={20} color="#4285F4" style={styles.googleIcon} />
               <Text style={styles.googleButtonText}>Entrar com Google</Text>
@@ -140,28 +141,44 @@ export default function LoginPage() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#189E50' },
   scrollContent: { flexGrow: 1 },
-  content: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  title: { fontSize: 32, fontWeight: 'bold', color: '#FFFFFF', marginBottom: 8 },
-  subtitle: { color: '#FFFFFF', fontSize: 14, marginBottom: 32, textAlign: 'center' },
-  tabContainer: { flexDirection: 'row', marginBottom: 24 },
-  tab: { paddingHorizontal: 24, paddingVertical: 8, borderTopLeftRadius: 8, borderBottomLeftRadius: 8 },
+  topSection: { alignItems: 'flex-start', paddingHorizontal: 24, paddingTop: 48, paddingBottom: 24 },
+  logo: { width: 200, height: 50, marginBottom: 16 },
+  title: { fontSize: 36, fontWeight: 'bold', color: '#FFFFFF', marginBottom: 8 },
+  subtitle: { fontSize: 12, color: '#FFFFFF', opacity: 0.9 },
+  card: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 40,
+    alignItems: 'center',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    borderRadius: 12,
+    borderWidth: 4,
+    borderColor: '#D1D5DB',
+    overflow: 'hidden',
+    marginBottom: 24,
+  },
+  tab: { paddingVertical: 4, paddingHorizontal: 48 },
   tabActive: { backgroundColor: '#FFFFFF' },
-  tabInactive: { backgroundColor: 'rgba(255,255,255,0.5)' },
-  tabText: { fontWeight: 'bold', fontSize: 16 },
-  tabTextActive: { color: '#273107' },
+  tabInactive: { backgroundColor: '#E5E7EB' },
+  tabText: { fontWeight: '600', fontSize: 16, textAlign: 'center' },
+  tabTextActive: { color: '#000000' },
   tabTextInactive: { color: '#9CA3AF' },
-  form: { width: '100%', maxWidth: 320, backgroundColor: '#FFFFFF', borderRadius: 12, padding: 24 },
-  inputGroup: { marginBottom: 16 },
-  label: { fontSize: 14, color: '#374151', marginBottom: 4 },
-  input: { width: '100%', paddingHorizontal: 12, paddingVertical: 8, borderWidth: 1, borderColor: '#9CA3AF', borderRadius: 8, fontSize: 16 },
-  error: { color: '#EF4444', fontSize: 12, marginTop: 4 },
-  errorCenter: { color: '#EF4444', fontSize: 12, textAlign: 'center', marginBottom: 16 },
-  button: { width: '100%', paddingVertical: 12, backgroundColor: '#189E50', borderRadius: 8 },
+  form: { width: '100%', maxWidth: 320, gap: 16 },
+  inputGroup: { gap: 4 },
+  label: { fontSize: 14, color: '#374151' },
+  input: { width: '100%', paddingHorizontal: 12, paddingVertical: 8, borderWidth: 1, borderColor: '#6B7280', borderRadius: 8, fontSize: 16, backgroundColor: '#FFFFFF' },
+  error: { color: '#EF4444', fontSize: 12 },
+  errorCenter: { color: '#EF4444', fontSize: 12, textAlign: 'center' },
+  button: { width: '100%', paddingVertical: 12, backgroundColor: '#189E50', borderRadius: 8, alignItems: 'center' },
   buttonText: { color: '#FFFFFF', textAlign: 'center', fontWeight: 'bold', fontSize: 16 },
-  googleButton: { width: '100%', paddingVertical: 12, backgroundColor: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#9CA3AF', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  orText: { textAlign: 'center', color: '#9CA3AF', fontSize: 14 },
+  googleButton: { width: '100%', paddingVertical: 12, backgroundColor: 'transparent', borderRadius: 8, borderWidth: 1, borderColor: '#6B7280', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   googleIcon: { marginRight: 8 },
   googleButtonText: { color: '#374151', fontWeight: '600', fontSize: 16 },
-  divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20, width: '100%' },
-  dividerLine: { flex: 1, height: 1, backgroundColor: '#E5E7EB' },
-  dividerText: { color: '#9CA3AF', marginHorizontal: 12, fontSize: 14 },
 });
