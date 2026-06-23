@@ -27,9 +27,12 @@ export default function BookListPage() {
     setNavigating(false);
   }, []));
 
-  const { data: books = [], isLoading } = useQuery<Book[]>({
+  const { data: books = [], isLoading, isError, refetch } = useQuery<Book[]>({
     queryKey: ["books", planId, user?.uid],
     enabled: !!user && !!planId,
+    staleTime: 1000 * 60 * 60 * 24,
+    gcTime: 1000 * 60 * 60 * 24,
+    retry: 1,
     queryFn: () => DevotionalService.getBooks(user!.uid, planId!),
   });
 
@@ -38,6 +41,24 @@ export default function BookListPage() {
   }
 
   if (!user) return null;
+
+  if (isError) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 24 }}>
+          <Text style={{ color: "#FFFFFF", fontSize: 14, textAlign: "center", marginBottom: 16 }}>
+            Erro ao carregar livros. Verifique sua conexão e tente novamente.
+          </Text>
+          <Pressable
+            onPress={() => refetch()}
+            style={{ paddingHorizontal: 24, paddingVertical: 12, backgroundColor: "#273107", borderRadius: 8 }}
+          >
+            <Text style={{ color: "#FFFFFF", fontSize: 14 }}>Tentar novamente</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   const handleBookPress = (book: Book) => {
     setNavigating(true);
