@@ -58,7 +58,7 @@ const identifier = await Notifications.scheduleNotificationAsync({
         sound: 'default',
         categoryIdentifier: 'DAILY_REMINDER',
         ...(Platform.OS === 'android' && {
-          priority: Notifications.AndroidPriority.HIGH,
+          priority: Notifications.AndroidNotificationPriority.HIGH,
         }),
       },
       trigger: {
